@@ -19,7 +19,7 @@ import com.pranshulgg.weather_master_app.data.store.WeatherBlocksStoreState
 import com.pranshulgg.weather_master_app.feature.main.components.CreditsBottomSection
 import com.pranshulgg.weather_master_app.feature.main.components.FroggyContainer
 import com.pranshulgg.weather_master_app.feature.main.ui.AlertsSection
-import com.pranshulgg.weather_master_app.feature.main.ui.CurrentWeatherCard
+import com.pranshulgg.weather_master_app.feature.main.ui.MetroCurrentWeatherHero
 import com.pranshulgg.weather_master_app.feature.shared.components.blocks.WeatherBlocks
 import com.pranshulgg.weather_master_app.feature.shared.ui.DailyCard
 import com.pranshulgg.weather_master_app.feature.shared.ui.HourlyCard
@@ -41,11 +41,11 @@ fun PhoneLayout(
     weatherBlocks: WeatherBlocksStoreState,
     onUpdateBlocks: (List<WeatherBlock>) -> Unit
 ) {
-    CurrentWeatherCard(
-        weather,
-        units,
-        context,
-        isFroggyLayout = isFroggyLayout
+    // Windows 10 Mobile style hero tile.
+    MetroCurrentWeatherHero(
+        weather = weather,
+        units = units,
+        context = context
     )
     if (isFroggyLayout) {
         FroggyContainer(weather)

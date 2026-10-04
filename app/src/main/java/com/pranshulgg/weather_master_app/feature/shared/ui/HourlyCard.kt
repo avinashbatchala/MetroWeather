@@ -178,7 +178,7 @@ private fun HourlyItem(
 @Composable
 private fun TempWithShape(temperature: Double?, isNow: Boolean = false) {
     Surface(
-        shape = MaterialShapes.Cookie4Sided.toShape(),
+        shape = androidx.compose.ui.graphics.RectangleShape,
         modifier = Modifier
             .size(36.dp),
         color = if (isNow) MaterialTheme.colorScheme.primary else Color.Transparent

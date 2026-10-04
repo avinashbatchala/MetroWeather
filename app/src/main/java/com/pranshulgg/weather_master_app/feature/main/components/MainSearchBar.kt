@@ -60,8 +60,8 @@ fun MainSearchBar(
     val endPadding = paddingValues.calculateEndPadding(layoutDirection)
 
     Surface(
-        color = if (isFroggyLayout) getSearchBarColor(isDark = isThemeDark()) else Color.Transparent,
-        shape = CircleShape,
+        color = if (isFroggyLayout) getSearchBarColor(isDark = isThemeDark()) else MaterialTheme.colorScheme.surface,
+        shape = androidx.compose.ui.graphics.RectangleShape,
         modifier = Modifier
             .padding(
                 top = paddingValues.calculateTopPadding() + 8.dp,

@@ -42,11 +42,7 @@ android {
     android.buildFeatures.buildConfig = true
 
     defaultConfig {
-        applicationId = if (playStore) {
-            "com.pranshulgg.weather_master"
-        } else {
-            "com.pranshulgg.weather_master_app"
-        }
+        applicationId = "com.metroweather.app"
         minSdk = 26
         targetSdk = 36
         versionCode = 67

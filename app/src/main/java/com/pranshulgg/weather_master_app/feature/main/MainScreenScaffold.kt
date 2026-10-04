@@ -79,7 +79,9 @@ fun MainScreenScaffold(
     val units = units.units
     val scrollState = rememberScrollState()
 
-    val isFroggyLayout = prefs.isFroggyLayout
+    // Metro revamp: the whimsical "Froggy" mascot layout is disabled on the main screen
+    // so the Windows 10 Mobile weather look (flat gradient + square tiles) is consistent.
+    val isFroggyLayout = false
     val isShowWeatherAnimations = prefs.isShowWeatherAnimations
     val isWeatherBasedTheme = prefs.isWeatherBasedTheme
     val isShowSummary = prefs.isShowSummary

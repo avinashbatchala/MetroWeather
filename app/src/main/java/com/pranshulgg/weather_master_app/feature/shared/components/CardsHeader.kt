@@ -30,9 +30,9 @@ fun CardsHeader(text: String, icon: Int? = null) {
         }
 
         Text(
-            text,
-            style = MaterialTheme.typography.titleMedium,
-            fontWeight = FontWeight.Bold,
+            text.uppercase(),
+            style = MaterialTheme.typography.labelLarge,
+            fontWeight = FontWeight.SemiBold,
             color = MaterialTheme.colorScheme.secondary
         )
 

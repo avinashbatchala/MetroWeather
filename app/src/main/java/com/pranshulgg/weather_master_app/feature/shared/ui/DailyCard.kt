@@ -111,15 +111,15 @@ private fun DailyItem(
     val minTemp = TemperatureUnit.CELSIUS.convert(minTemp, units.tempUnit)?.roundToInt() ?: "-"
 
     Surface(
-        color = MaterialTheme.colorScheme.surfaceContainer,
-        shape = CircleShape,
+        color = MaterialTheme.colorScheme.surfaceContainerHigh,
+        shape = androidx.compose.ui.graphics.RectangleShape,
         onClick = onDailyItemClick
     ) {
         Column(
             Modifier
-                .heightIn(210.dp)
-                .width(65.dp)
-                .padding(vertical = 24.dp),
+                .heightIn(150.dp)
+                .width(84.dp)
+                .padding(vertical = 14.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceBetween
         ) {
