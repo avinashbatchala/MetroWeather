@@ -70,14 +70,13 @@ fun ChangelogContent(hideSheet: () -> Unit) {
             }
         }
 
-        Button(
-            onClick = hideSheet, modifier = Modifier
+        com.metro.ui.components.MetroButton(
+            text = stringResource(R.string.action_ok),
+            onClick = hideSheet,
+            modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
-            shapes = ButtonDefaults.shapes()
-        ) {
-            Text(stringResource(R.string.action_ok))
-        }
+                .padding(16.dp)
+        )
     }
 }
 

@@ -59,13 +59,11 @@ object EditLocationBottomSheet {
                 confirmText = stringResource(R.string.action_save),
                 cancelText = stringResource(R.string.action_cancel)
             ) {
-                OutlinedTextField(
+                com.metro.ui.components.MetroSearchBox(
                     value = currentText,
                     onValueChange = { currentText = it },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp),
-                    placeholder = { Text("Name") },
+                    placeholder = "Name",
+                    modifier = Modifier.padding(horizontal = 16.dp)
                 )
             }
         }

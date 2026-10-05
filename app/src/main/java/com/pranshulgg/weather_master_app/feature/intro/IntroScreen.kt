@@ -5,6 +5,7 @@ import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -119,12 +120,11 @@ fun IntroScreen(navController: NavController) {
         }
     )
 
-    Scaffold(
-        containerColor = MaterialTheme.colorScheme.surfaceContainer
-    ) { paddingValues ->
-
-        val btnSize = ButtonDefaults.MediumContainerHeight
-
+    androidx.compose.foundation.layout.Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+    ) {
 
         Box(
             Modifier.fillMaxSize()
@@ -133,11 +133,7 @@ fun IntroScreen(navController: NavController) {
             Column(
                 Modifier
                     .align(Alignment.Center)
-                    .padding(
-                        start = 16.dp,
-                        end = 16.dp,
-                        top = paddingValues.calculateTopPadding()
-                    ),
+                    .padding(horizontal = 16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Icon()
@@ -156,56 +152,28 @@ fun IntroScreen(navController: NavController) {
                     textAlign = TextAlign.Center
                 )
                 Gap(28.dp)
-                Button(
+                com.metro.ui.components.MetroButton(
+                    text = if (isLoading) "Loading..." else "Enable Location",
+                    onClick = { locationPermissionInfoDialogOpen = true },
+                    modifier = Modifier.fillMaxWidth(0.7f),
                     enabled = !isLoading && !isImportingBackup,
-                    onClick = {
-                        locationPermissionInfoDialogOpen = true
-                    },
-                    modifier = Modifier
-                        .heightIn(btnSize)
-                        .fillMaxWidth(0.7f),
-                    contentPadding = ButtonDefaults.contentPaddingFor(btnSize),
-                    shapes = ButtonDefaults.shapes()
-                ) {
-                    Text(
-                        if (isLoading) "Loading..." else "Enable Location",
-                        style = ButtonDefaults.textStyleFor(btnSize)
-                    )
-                }
+                    outlined = false
+                )
                 Gap(12.dp)
-                OutlinedButton(
+                com.metro.ui.components.MetroButton(
+                    text = "Search for a City",
+                    onClick = { navController.navigate(NavRoutes.SEARCH) },
+                    modifier = Modifier.fillMaxWidth(0.7f),
                     enabled = !isLoading && !isImportingBackup,
-                    onClick = {
-                        navController.navigate(NavRoutes.SEARCH)
-                    },
-                    modifier = Modifier
-                        .heightIn(btnSize)
-                        .fillMaxWidth(0.7f),
-                    contentPadding = ButtonDefaults.contentPaddingFor(btnSize),
-                    shapes = ButtonDefaults.shapes()
-                ) {
-                    Text(
-                        "Search for a City",
-                        style = ButtonDefaults.textStyleFor(btnSize),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
+                    outlined = true
+                )
                 Gap(4.dp)
-                TextButton(
+                com.metro.ui.components.MetroButton(
+                    text = if (isImportingBackup) "Importing..." else "Import a backup",
+                    onClick = { importBackupLauncher.launch(arrayOf("application/json")) },
                     enabled = !isLoading && !isImportingBackup,
-                    onClick = {
-                        importBackupLauncher.launch(arrayOf("application/json"))
-                    },
-                    modifier = Modifier.heightIn(btnSize),
-                    contentPadding = ButtonDefaults.contentPaddingFor(btnSize),
-                    shapes = ButtonDefaults.shapes()
-                ) {
-                    Text(
-                        if (isImportingBackup) "Importing..." else "Import a backup",
-                        style = ButtonDefaults.textStyleFor(btnSize),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
+                    outlined = false
+                )
             }
 
             Box(

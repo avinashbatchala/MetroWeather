@@ -405,31 +405,12 @@ private fun ButtonWithIcon(
     enabled: Boolean = true
 ) {
 
-    val btnSize = ButtonDefaults.MediumContainerHeight
-
-    Button(
-        colors = ButtonDefaults.buttonColors(
-            containerColor = containerColor
-        ),
+    com.metro.ui.components.MetroButton(
+        text = text,
+        onClick = onClick,
         modifier = Modifier
-            .heightIn(btnSize)
             .fillMaxWidth()
             .padding(horizontal = 16.dp),
-        onClick = onClick,
-        enabled = enabled,
-        shapes = ButtonDefaults.shapes(),
-        contentPadding = ButtonDefaults.contentPaddingFor(btnSize),
-    ) {
-        Symbol(
-            icon,
-            color = contentColor,
-            size = ButtonDefaults.iconSizeFor(btnSize)
-        )
-        Gap(horizontal = ButtonDefaults.iconSpacingFor(btnSize))
-        Text(
-            text,
-            style = ButtonDefaults.textStyleFor(btnSize),
-            color = contentColor
-        )
-    }
+        enabled = enabled
+    )
 }

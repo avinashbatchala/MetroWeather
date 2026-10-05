@@ -57,18 +57,20 @@ fun WeatherSourcesScreen(navController: NavController) {
                 modifier = Modifier.padding(horizontal = 16.dp)
             )
             Gap(5.dp)
-            Button(onClick = {
-                uriHandler.openUri("https://github.com/PranshulGG/WeatherMaster/issues/new?template=new_source.yaml")
-            }, modifier = Modifier.padding(horizontal = 16.dp), shapes = ButtonDefaults.shapes()) {
-                Text(stringResource(R.string.action_request))
-            }
+            com.metro.ui.components.MetroButton(
+                text = stringResource(R.string.action_request),
+                onClick = {
+                    uriHandler.openUri("https://github.com/PranshulGG/WeatherMaster/issues/new?template=new_source.yaml")
+                },
+                modifier = Modifier.padding(horizontal = 16.dp)
+            )
             Gap(5.dp)
 
-            Button(onClick = {
-                navController.navigate(NavRoutes.API_KEYS_CONFIG)
-            }, modifier = Modifier.padding(horizontal = 16.dp), shapes = ButtonDefaults.shapes()) {
-                Text(stringResource(R.string.settings_api_key_config))
-            }
+            com.metro.ui.components.MetroButton(
+                text = stringResource(R.string.settings_api_key_config),
+                onClick = { navController.navigate(NavRoutes.API_KEYS_CONFIG) },
+                modifier = Modifier.padding(horizontal = 16.dp)
+            )
             Gap(12.dp)
             sources.forEach {
                 val countryString =

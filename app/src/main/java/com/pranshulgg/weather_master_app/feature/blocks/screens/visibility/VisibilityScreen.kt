@@ -6,6 +6,9 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.width
+import androidx.compose.ui.Alignment
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -123,18 +126,30 @@ fun VisibilityScreen(navController: NavController, index: Int = 0, locationId: S
             Gap(14.dp)
             ScaleCard {
                 scale.forEach {
-                    ListItem(
-                        colors = ListItemDefaults.colors(containerColor = Color.Transparent),
-                        content = { Text(it.headline) },
-                        supportingContent = { Text(it.description) },
-                        trailingContent = {
+                    androidx.compose.foundation.layout.Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Column(modifier = Modifier.weight(1f)) {
                             Text(
-                                it.scale,
+                                it.headline,
                                 color = MaterialTheme.colorScheme.onSurface,
-                                style = MaterialTheme.typography.bodyLarge
+                                style = MaterialTheme.typography.titleMedium
+                            )
+                            Text(
+                                it.description,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                style = MaterialTheme.typography.bodySmall
                             )
                         }
-                    )
+                        Text(
+                            it.scale,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+                    }
                 }
             }
             Gap(WindowInsets.systemBars.asPaddingValues().calculateBottomPadding() + 30.dp)
