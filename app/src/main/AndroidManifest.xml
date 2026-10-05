@@ -228,5 +228,10 @@
         <intent>
             <action android:name="nodomain.freeyourgadget.gadgetbridge.ACTION_GENERIC_WEATHER" />
         </intent>
+        <!-- Android 11+ package visibility: allows starting the Win10 Start launcher's
+             pin-weather-tile activity via its implicit action. -->
+        <intent>
+            <action android:name="com.ab.action.PIN_WEATHER_TILE" />
+        </intent>
     </queries>
 </manifest>

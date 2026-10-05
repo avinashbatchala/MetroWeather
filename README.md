@@ -1,137 +1,52 @@
-<div align="center">
-   <img src="preview/icon.png" alt="" width="150px">
-</div> 
-<h1 align="center">
- WeatherMaster
-</h1>
-   <div  align="center">
-      <img src="https://img.shields.io/github/license/PranshulGG/WeatherMaster?style=for-the-badge&color=cba6f7&labelColor=302D41">
-      <img src="https://img.shields.io/github/last-commit/PranshulGG/WeatherMaster?style=for-the-badge&color=b1d18a&labelColor=1f3701">
-      <img src="https://img.shields.io/github/release/PranshulGG/WeatherMaster?style=for-the-badge&color=dbc66e&labelColor=3a3000">
-      <br>
-      <img src="https://img.shields.io/github/stars/PranshulGG/WeatherMaster?style=for-the-badge&color=ffb5a0&labelColor=561f0f">
-      <img src="https://img.shields.io/github/downloads/PranshulGG/WeatherMaster/total?label=Downloads&style=for-the-badge&color=aac7ff&labelColor=0a305f">
-      <a href="https://discord.gg/sSW2E4nqmn">
- <img src="https://img.shields.io/discord/1302477023410782229?label=Discord&style=for-the-badge&color=ffb0c8&labelColor=541d32">
-</a>
+# MetroWeather
 
-   </div>
-   <div align="center">
+A **Windows 10 Mobile (MSN Weather) style** weather app for Android — part of the
+**MetroSuite**.
 
-<img src="https://shields.rbtlog.dev/simple/com.pranshulgg.weather_master_app?style=for-the-badge" alt="RB Status">
-   </div>
+MetroWeather is the weather companion to the **Win10 Start** launcher. It reimagines the
+weather experience in the Windows 10 Mobile "Metro" design language rather than the Material
+look it was forked from: a flat, square, accent-driven UI built around an immersive animated
+condition scene.
 
-   <div align="center">
-   <h3>WeatherMaster: inspired by the Google Pixel weather app.</h3>
+## Features
 
-   </div>
- <div align="center">
+- **Immersive condition scene** — a day/night gradient plus animated sun, clouds, rain,
+  snow, fog and stars, with scroll parallax and an automatic light/dark foreground.
+- **`now · hourly · daily · places` pivot** with a centred hero temperature.
+- **Hourly temperature graph** — a curve with weather icons and precipitation.
+- **Detail tiles** for wind, humidity, pressure, UV index, visibility, precipitation,
+  sunrise and sunset.
+- **Windows 10 Mobile settings pivots** (appearance / weather / notifications / about) with
+  flat Metro dialogs, toggles and lists.
+- **Live Tile** — pin the current city to the **Win10 Start** launcher's Start screen.
+- **Multiple weather sources** (Open-Meteo, Met Norway, NWS, DWD, SMHI, FMI and more) with a
+  per-location source picker.
 
-[Features](https://github.com/PranshulGG/WeatherMaster?tab=readme-ov-file#-features) • [Contact](https://github.com/PranshulGG/WeatherMaster?tab=readme-ov-file#%EF%B8%8F-contact) • [License](https://github.com/PranshulGG/WeatherMaster?tab=readme-ov-file#%EF%B8%8F-license) • [Translate](https://github.com/PranshulGG/WeatherMaster?tab=readme-ov-file#-translate-the-app-on-crowdin)
- </div>
+## Design system
 
-<div align="center">
- <a href="https://github.com/PranshulGG/WeatherMaster/releases"><img alt="GitHub" src="preview/get_on_github_btn.png" height="80"/></a>
-   <a href="https://apt.izzysoft.de/fdroid/index/apk/com.pranshulgg.weather_master_app"><img alt="GitHub" src="preview/get_on_izzy_btn.png" height="80"/></a>
-   <a href="https://play.google.com/store/apps/details?id=com.pranshulgg.weather_master"><img alt="GitHub" src="preview/get_on_googleplay_btn.png" height="80"/></a></div>
+The UI is built on the shared **`:metro-ui`** Windows Metro design system
+(`MetroSuite/design`), consumed as a Gradle composite build, so the launcher and this app
+stay visually consistent.
 
-<br>
+## Build
 
-![app_thumbnail](preview/new_thumbnail.png)
+Requires JDK 21 and an Android SDK. Always pass `--no-configuration-cache` on the CLI
+(the Java compile task cannot be serialized into the configuration cache).
 
-# 👁️ Screenshots
+```
+./gradlew :app:assembleDebug --no-configuration-cache
+./gradlew :app:testDebugUnitTest --no-configuration-cache
+```
 
-<div align="center">
-<img src="preview/preview_1.png"  width="250">
-<img src="preview/preview_2.png"  width="250">
-<img src="preview/preview_3.png"  width="250">
-<img src="preview/preview_4.png"  width="250">
+This checkout expects the shared design module at `../../design` (the MetroSuite layout).
+Set `sdk.dir` in a local, gitignored `local.properties`.
 
-</div>
+## License
 
-<br>
+GPL-3.0. See [LICENSE](LICENSE).
 
-# 🌦️ Supported weather sources
+## Attribution
 
-- **Open Meteo**
-- **Met Norway**
-- **NWS**
-- **SMHI**
-- **DWD**
-- **Meteo-France**
-- **FMI**
-- **ECCC**
-- **BMKG**
-- **China**
-- **AccuWeather**
-- **Meteo AM**
-- **IPMA**
-- **WeatherApi.com**
-- **Gismeteo**
-- **Met Office** _(requires your own API key — sign up [here](https://www.metoffice.gov.uk/))_
-- **AEMET** _(requires your own API key — sign
-  up [here](https://opendata.aemet.es/centrodedescargas/altaUsuario))_
-- **IMD**
-- **WMO Severe Weather Information Centre**
-- **FOSS Public Alert Server**
-- **CWA**
-- **Pirate Weather**
-- **JMA**
-- **IMET**
-- **OpenWeather**
-- _**And more to be added**_
-
-Some sources need a free API key from the provider before you can select them — add yours from a
-location's weather source picker, or from **Settings → Weather Sources → API key config**.
-
-# 🌐 Translate the app on [Crowdin](https://crowdin.com/project/weathermaster)
-
-_**Feel free to open an issue if you want to request a language**_
-
-<a href="https://crowdin.com/project/weathermaster" style="background-color: red"></a>
-[![ar-SA translation](https://img.shields.io/badge/dynamic/json?color=blue&label=ar-SA&style=flat&logo=crowdin&query=%24.progress.0.data.translationProgress&url=https%3A%2F%2Fbadges.awesome-crowdin.com%2Fstats-16727791-741419.json)](https://crowdin.com/project/weathermaster)
-[![az translation](https://img.shields.io/badge/dynamic/json?color=blue&label=az&style=flat&logo=crowdin&query=%24.progress.1.data.translationProgress&url=https%3A%2F%2Fbadges.awesome-crowdin.com%2Fstats-16727791-741419.json)](https://crowdin.com/project/weathermaster)
-[![bg translation](https://img.shields.io/badge/dynamic/json?color=blue&label=bg&style=flat&logo=crowdin&query=%24.progress.2.data.translationProgress&url=https%3A%2F%2Fbadges.awesome-crowdin.com%2Fstats-16727791-741419.json)](https://crowdin.com/project/weathermaster)
-[![ca translation](https://img.shields.io/badge/dynamic/json?color=blue&label=ca&style=flat&logo=crowdin&query=%24.progress.3.data.translationProgress&url=https%3A%2F%2Fbadges.awesome-crowdin.com%2Fstats-16727791-741419.json)](https://crowdin.com/project/weathermaster)
-[![cs translation](https://img.shields.io/badge/dynamic/json?color=blue&label=cs&style=flat&logo=crowdin&query=%24.progress.4.data.translationProgress&url=https%3A%2F%2Fbadges.awesome-crowdin.com%2Fstats-16727791-741419.json)](https://crowdin.com/project/weathermaster)
-[![de translation](https://img.shields.io/badge/dynamic/json?color=blue&label=de&style=flat&logo=crowdin&query=%24.progress.5.data.translationProgress&url=https%3A%2F%2Fbadges.awesome-crowdin.com%2Fstats-16727791-741419.json)](https://crowdin.com/project/weathermaster)
-[![el translation](https://img.shields.io/badge/dynamic/json?color=blue&label=el&style=flat&logo=crowdin&query=%24.progress.6.data.translationProgress&url=https%3A%2F%2Fbadges.awesome-crowdin.com%2Fstats-16727791-741419.json)](https://crowdin.com/project/weathermaster)
-[![es-ES translation](https://img.shields.io/badge/dynamic/json?color=blue&label=es-ES&style=flat&logo=crowdin&query=%24.progress.7.data.translationProgress&url=https%3A%2F%2Fbadges.awesome-crowdin.com%2Fstats-16727791-741419.json)](https://crowdin.com/project/weathermaster)
-[![fa translation](https://img.shields.io/badge/dynamic/json?color=blue&label=fa&style=flat&logo=crowdin&query=%24.progress.8.data.translationProgress&url=https%3A%2F%2Fbadges.awesome-crowdin.com%2Fstats-16727791-741419.json)](https://crowdin.com/project/weathermaster)
-[![fi translation](https://img.shields.io/badge/dynamic/json?color=blue&label=fi&style=flat&logo=crowdin&query=%24.progress.9.data.translationProgress&url=https%3A%2F%2Fbadges.awesome-crowdin.com%2Fstats-16727791-741419.json)](https://crowdin.com/project/weathermaster)
-[![fil translation](https://img.shields.io/badge/dynamic/json?color=blue&label=fil&style=flat&logo=crowdin&query=%24.progress.10.data.translationProgress&url=https%3A%2F%2Fbadges.awesome-crowdin.com%2Fstats-16727791-741419.json)](https://crowdin.com/project/weathermaster)
-[![fr translation](https://img.shields.io/badge/dynamic/json?color=blue&label=fr&style=flat&logo=crowdin&query=%24.progress.11.data.translationProgress&url=https%3A%2F%2Fbadges.awesome-crowdin.com%2Fstats-16727791-741419.json)](https://crowdin.com/project/weathermaster)
-[![hu translation](https://img.shields.io/badge/dynamic/json?color=blue&label=hu&style=flat&logo=crowdin&query=%24.progress.12.data.translationProgress&url=https%3A%2F%2Fbadges.awesome-crowdin.com%2Fstats-16727791-741419.json)](https://crowdin.com/project/weathermaster)
-[![id translation](https://img.shields.io/badge/dynamic/json?color=blue&label=id&style=flat&logo=crowdin&query=%24.progress.13.data.translationProgress&url=https%3A%2F%2Fbadges.awesome-crowdin.com%2Fstats-16727791-741419.json)](https://crowdin.com/project/weathermaster)
-[![it translation](https://img.shields.io/badge/dynamic/json?color=blue&label=it&style=flat&logo=crowdin&query=%24.progress.14.data.translationProgress&url=https%3A%2F%2Fbadges.awesome-crowdin.com%2Fstats-16727791-741419.json)](https://crowdin.com/project/weathermaster)
-[![ja translation](https://img.shields.io/badge/dynamic/json?color=blue&label=ja&style=flat&logo=crowdin&query=%24.progress.15.data.translationProgress&url=https%3A%2F%2Fbadges.awesome-crowdin.com%2Fstats-16727791-741419.json)](https://crowdin.com/project/weathermaster)
-[![ko translation](https://img.shields.io/badge/dynamic/json?color=blue&label=ko&style=flat&logo=crowdin&query=%24.progress.16.data.translationProgress&url=https%3A%2F%2Fbadges.awesome-crowdin.com%2Fstats-16727791-741419.json)](https://crowdin.com/project/weathermaster)
-[![lt translation](https://img.shields.io/badge/dynamic/json?color=blue&label=lt&style=flat&logo=crowdin&query=%24.progress.17.data.translationProgress&url=https%3A%2F%2Fbadges.awesome-crowdin.com%2Fstats-16727791-741419.json)](https://crowdin.com/project/weathermaster)
-[![nl translation](https://img.shields.io/badge/dynamic/json?color=blue&label=nl&style=flat&logo=crowdin&query=%24.progress.18.data.translationProgress&url=https%3A%2F%2Fbadges.awesome-crowdin.com%2Fstats-16727791-741419.json)](https://crowdin.com/project/weathermaster)
-[![pl translation](https://img.shields.io/badge/dynamic/json?color=blue&label=pl&style=flat&logo=crowdin&query=%24.progress.19.data.translationProgress&url=https%3A%2F%2Fbadges.awesome-crowdin.com%2Fstats-16727791-741419.json)](https://crowdin.com/project/weathermaster)
-[![pt-BR translation](https://img.shields.io/badge/dynamic/json?color=blue&label=pt-BR&style=flat&logo=crowdin&query=%24.progress.20.data.translationProgress&url=https%3A%2F%2Fbadges.awesome-crowdin.com%2Fstats-16727791-741419.json)](https://crowdin.com/project/weathermaster)
-[![pt-PT translation](https://img.shields.io/badge/dynamic/json?color=blue&label=pt-PT&style=flat&logo=crowdin&query=%24.progress.21.data.translationProgress&url=https%3A%2F%2Fbadges.awesome-crowdin.com%2Fstats-16727791-741419.json)](https://crowdin.com/project/weathermaster)
-[![ro translation](https://img.shields.io/badge/dynamic/json?color=blue&label=ro&style=flat&logo=crowdin&query=%24.progress.22.data.translationProgress&url=https%3A%2F%2Fbadges.awesome-crowdin.com%2Fstats-16727791-741419.json)](https://crowdin.com/project/weathermaster)
-[![ru translation](https://img.shields.io/badge/dynamic/json?color=blue&label=ru&style=flat&logo=crowdin&query=%24.progress.23.data.translationProgress&url=https%3A%2F%2Fbadges.awesome-crowdin.com%2Fstats-16727791-741419.json)](https://crowdin.com/project/weathermaster)
-[![sl translation](https://img.shields.io/badge/dynamic/json?color=blue&label=sl&style=flat&logo=crowdin&query=%24.progress.24.data.translationProgress&url=https%3A%2F%2Fbadges.awesome-crowdin.com%2Fstats-16727791-741419.json)](https://crowdin.com/project/weathermaster)
-[![sr translation](https://img.shields.io/badge/dynamic/json?color=blue&label=sr&style=flat&logo=crowdin&query=%24.progress.25.data.translationProgress&url=https%3A%2F%2Fbadges.awesome-crowdin.com%2Fstats-16727791-741419.json)](https://crowdin.com/project/weathermaster)
-[![sr-CS translation](https://img.shields.io/badge/dynamic/json?color=blue&label=sr-CS&style=flat&logo=crowdin&query=%24.progress.26.data.translationProgress&url=https%3A%2F%2Fbadges.awesome-crowdin.com%2Fstats-16727791-741419.json)](https://crowdin.com/project/weathermaster)
-[![sv-SE translation](https://img.shields.io/badge/dynamic/json?color=blue&label=sv-SE&style=flat&logo=crowdin&query=%24.progress.27.data.translationProgress&url=https%3A%2F%2Fbadges.awesome-crowdin.com%2Fstats-16727791-741419.json)](https://crowdin.com/project/weathermaster)
-[![th translation](https://img.shields.io/badge/dynamic/json?color=blue&label=th&style=flat&logo=crowdin&query=%24.progress.28.data.translationProgress&url=https%3A%2F%2Fbadges.awesome-crowdin.com%2Fstats-16727791-741419.json)](https://crowdin.com/project/weathermaster)
-[![tr translation](https://img.shields.io/badge/dynamic/json?color=blue&label=tr&style=flat&logo=crowdin&query=%24.progress.29.data.translationProgress&url=https%3A%2F%2Fbadges.awesome-crowdin.com%2Fstats-16727791-741419.json)](https://crowdin.com/project/weathermaster)
-[![uk translation](https://img.shields.io/badge/dynamic/json?color=blue&label=uk&style=flat&logo=crowdin&query=%24.progress.30.data.translationProgress&url=https%3A%2F%2Fbadges.awesome-crowdin.com%2Fstats-16727791-741419.json)](https://crowdin.com/project/weathermaster)
-[![vi translation](https://img.shields.io/badge/dynamic/json?color=blue&label=vi&style=flat&logo=crowdin&query=%24.progress.31.data.translationProgress&url=https%3A%2F%2Fbadges.awesome-crowdin.com%2Fstats-16727791-741419.json)](https://crowdin.com/project/weathermaster)
-[![zh-CN translation](https://img.shields.io/badge/dynamic/json?color=blue&label=zh-CN&style=flat&logo=crowdin&query=%24.progress.32.data.translationProgress&url=https%3A%2F%2Fbadges.awesome-crowdin.com%2Fstats-16727791-741419.json)](https://crowdin.com/project/weathermaster)
-[![zh-TW translation](https://img.shields.io/badge/dynamic/json?color=blue&label=zh-TW&style=flat&logo=crowdin&query=%24.progress.33.data.translationProgress&url=https%3A%2F%2Fbadges.awesome-crowdin.com%2Fstats-16727791-741419.json)](https://crowdin.com/project/weathermaster)
-[![ar-SA translation](https://img.shields.io/badge/dynamic/json?color=blue&label=ar-SA&style=flat&logo=crowdin&query=%24.progress.0.data.translationProgress&url=https%3A%2F%2Fbadges.awesome-crowdin.com%2Fstats-16727791-741419.json)](https://crowdin.com/project/weathermaster)
-[![lt translation](https://img.shields.io/badge/dynamic/json?color=blue&label=lt&style=flat&logo=crowdin&query=%24.progress.18.data.translationProgress&url=https%3A%2F%2Fbadges.awesome-crowdin.com%2Fstats-16727791-741419.json)](https://crowdin.com/project/weathermaster)
-[![he translation](https://img.shields.io/badge/dynamic/json?color=blue&label=he&style=flat&logo=crowdin&query=%24.progress.12.data.translationProgress&url=https%3A%2F%2Fbadges.awesome-crowdin.com%2Fstats-16727791-741419.json)](https://crowdin.com/project/weathermaster)
-
-# ✉️ Contact
-
-For any questions or feedback, feel free to open an issue on GitHub or contact
-pranshul.devmain@gmail.com
-
-# ©️ License
-
-This project is licensed under the GPL-3.0 license. See the `LICENSE` file for details.
+MetroWeather is a fork of [WeatherMaster](https://github.com/PranshulGG/WeatherMaster) by
+PranshulGG, licensed under GPL-3.0. The upstream weather-source integrations and forecast
+data model originate there.
