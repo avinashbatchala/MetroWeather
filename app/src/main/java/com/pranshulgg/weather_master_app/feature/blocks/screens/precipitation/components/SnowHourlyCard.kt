@@ -125,14 +125,12 @@ fun SnowHourlyCard(
                                     .width(18.dp)
                                     .height(140.dp),
                                 color = MaterialTheme.colorScheme.surfaceContainer,
-                                shape = CircleShape
                             ) {}
                             Surface(
                                 Modifier
                                     .width(38.dp)
                                     .height(barHeight.dp),
                                 color = barColor,
-                                shape = CircleShape
                             ) {}
                         }
                         Gap(5.dp)

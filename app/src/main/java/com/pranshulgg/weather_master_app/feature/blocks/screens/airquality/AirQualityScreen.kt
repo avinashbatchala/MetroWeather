@@ -91,7 +91,6 @@ fun AirQualityScreen(navController: NavController, index: Int = 0, locationId: S
                 AirQualityLevel.entries.forEach { level ->
                     Surface(
                         color = AirQualityColors.getColors(level),
-                        shape = CircleShape
                     ) {
                         Text(
                             level.toName(context),

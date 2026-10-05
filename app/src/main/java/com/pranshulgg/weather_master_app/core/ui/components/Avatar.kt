@@ -23,7 +23,7 @@ fun AvatarMonogram(
     text: String,
     containerColor: Color = MaterialTheme.colorScheme.primaryContainer,
     contentColor: Color = MaterialTheme.colorScheme.onPrimaryContainer,
-    cornerRadius: Dp = ShapeRadius.Full
+    cornerRadius: Dp = ShapeRadius.Large
 ) {
 
     Surface(
@@ -52,7 +52,7 @@ fun AvatarIcon(
     icon: Int,
     containerColor: Color = MaterialTheme.colorScheme.primaryContainer,
     contentColor: Color = MaterialTheme.colorScheme.onPrimaryContainer,
-    cornerRadius: Dp = ShapeRadius.Full,
+    cornerRadius: Dp = ShapeRadius.Large,
     avatarSize: Dp = 40.dp,
     iconSize: Dp = 24.dp
 ) {
@@ -83,7 +83,6 @@ fun AvatarCheck(
 ) {
     Surface(
         color = containerColor,
-        shape = CircleShape,
     ) {
         Box(
             contentAlignment = Alignment.Center,

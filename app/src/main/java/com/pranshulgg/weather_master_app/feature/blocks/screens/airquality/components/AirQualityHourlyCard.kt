@@ -125,7 +125,6 @@ fun AirQualityHourlyCard(data: List<AirQualityHourly>, zoneId: String, airQualit
                                     .width(18.dp)
                                     .height(140.dp),
                                 color = MaterialTheme.colorScheme.surfaceContainer,
-                                shape = CircleShape
                             ) {
 
                             }
@@ -134,7 +133,6 @@ fun AirQualityHourlyCard(data: List<AirQualityHourly>, zoneId: String, airQualit
                                     .width(38.dp)
                                     .height(barHeight.dp),
                                 color = AirQualityColors.getColors(airQuality.getAqiLevel(aqi)),
-                                shape = CircleShape
                             ) {
 
                             }

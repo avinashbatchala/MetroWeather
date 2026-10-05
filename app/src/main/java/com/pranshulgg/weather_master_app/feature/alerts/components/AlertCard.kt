@@ -123,7 +123,6 @@ fun AlertCard(alert: Alert, prefs: AppPrefsState, zoneId: String, shape: Shape) 
 private fun Chip(text: String, color: Color, textColor: Color) {
     Surface(
         color = color,
-        shape = CircleShape,
     ) {
         Text(
             text,

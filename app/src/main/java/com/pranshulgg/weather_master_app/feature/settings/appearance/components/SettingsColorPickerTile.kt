@@ -41,7 +41,7 @@ fun ColorPickerBtn() {
     var isSheetOpen by remember { mutableStateOf(false) }
 
     Surface(
-        shape = RoundedCornerShape(50.dp),
+        shape = RoundedCornerShape(0.dp),
         border = BorderStroke(width = 1.dp, color = MaterialTheme.colorScheme.outlineVariant)
     ) {
         Box(

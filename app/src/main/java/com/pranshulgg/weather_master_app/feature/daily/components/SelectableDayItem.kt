@@ -34,12 +34,6 @@ fun SelectableDayItem(
 ) {
 
 
-    val animatedShape by animateDpAsState(
-        targetValue = if (isSelected) 24.dp else 50.dp,
-        animationSpec = motionScheme.defaultSpatialSpec(),
-        label = "shape"
-    )
-
     val animatedColor by animateColorAsState(
         targetValue = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceContainerHighest,
         animationSpec = motionScheme.defaultEffectsSpec(),
@@ -54,7 +48,6 @@ fun SelectableDayItem(
 
     Surface(
         color = animatedColor,
-        shape = RoundedCornerShape(animatedShape),
         onClick = onSelect
     ) {
         Column(

@@ -29,7 +29,6 @@ fun ChartBarItem(
     Box(
         modifier = Modifier
             .background(
-                shape = CircleShape,
                 color = barBackgroundColor
             )
             .height(height.dp)

@@ -98,14 +98,12 @@ fun UvIndexHourlyCard(data: List<WeatherHourly>, zoneId: String) {
                                     .width(18.dp)
                                     .height(140.dp),
                                 color = MaterialTheme.colorScheme.surfaceContainer,
-                                shape = CircleShape
                             ) {}
                             Surface(
                                 Modifier
                                     .width(38.dp)
                                     .height(barHeight.dp),
                                 color = getUvIndex(item.uvIndex.roundToInt()).toColor(),
-                                shape = CircleShape
                             ) {}
                         }
                         Gap(5.dp)

@@ -155,7 +155,6 @@ fun SunMoonScreen(navController: NavController, index: Int, locationId: String) 
                         Gap(4.dp)
                         Surface(
                             color = MaterialTheme.colorScheme.primary,
-                            shape = CircleShape,
                             modifier = Modifier.size(80.dp),
                             border = BorderStroke(
                                 width = 1.dp,

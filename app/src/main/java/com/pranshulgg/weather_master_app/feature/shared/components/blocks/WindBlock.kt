@@ -58,7 +58,6 @@ fun WindBlock(
 
     Surface(
         color = MaterialTheme.colorScheme.surface,
-        shape = RoundedCornerShape(ShapeRadius.Full),
         shadowElevation = ShadowElevation.level2,
         onClick = onClickBlock
     ) {

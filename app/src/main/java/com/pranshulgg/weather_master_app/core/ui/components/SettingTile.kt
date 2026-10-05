@@ -155,7 +155,7 @@ fun SettingSection(
 
 
             val shape = when {
-                primarySwitch -> RoundedCornerShape(ShapeRadius.Full)
+                primarySwitch -> RoundedCornerShape(ShapeRadius.Large)
                 isOnly -> RoundedCornerShape(ShapeRadius.Large)
                 isFirst -> RoundedCornerShape(
                     topStart = ShapeRadius.Large,

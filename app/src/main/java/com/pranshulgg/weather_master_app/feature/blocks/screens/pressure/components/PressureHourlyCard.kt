@@ -141,7 +141,6 @@ fun PressureHourlyCard(
                                     .width(18.dp)
                                     .height(140.dp),
                                 color = MaterialTheme.colorScheme.surfaceContainer,
-                                shape = CircleShape
                             ) {
 
                             }
@@ -150,7 +149,6 @@ fun PressureHourlyCard(
                                     .width(38.dp)
                                     .height(barHeight.dp),
                                 color = barColor,
-                                shape = CircleShape
                             ) {
                                 Box(
                                     Modifier

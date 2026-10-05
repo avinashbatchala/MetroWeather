@@ -137,7 +137,6 @@ private fun DewPointRow(dewPoint: String?) {
     ) {
         Surface(
             color = MaterialTheme.colorScheme.primary,
-            shape = CircleShape,
         ) {
             Box(
                 contentAlignment = Alignment.Center,

@@ -95,7 +95,6 @@ fun HumidityHourlyCard(data: List<WeatherHourly>, zoneId: String) {
                                     .width(18.dp)
                                     .height(140.dp),
                                 color = MaterialTheme.colorScheme.surfaceContainer,
-                                shape = CircleShape
                             ) {
 
                             }
@@ -104,7 +103,6 @@ fun HumidityHourlyCard(data: List<WeatherHourly>, zoneId: String) {
                                     .width(38.dp)
                                     .height(barHeight.dp),
                                 color = barColor,
-                                shape = CircleShape
                             ) {
 
                             }

@@ -157,7 +157,6 @@ fun PollutantHourlyCard(
                                 .width(18.dp)
                                 .height(140.dp),
                             color = MaterialTheme.colorScheme.surfaceContainer,
-                            shape = CircleShape
                         ) {
 
                         }
@@ -172,7 +171,6 @@ fun PollutantHourlyCard(
                                         pollutant
                                     )
                                 ),
-                                shape = CircleShape
                             ) {
 
                             }
