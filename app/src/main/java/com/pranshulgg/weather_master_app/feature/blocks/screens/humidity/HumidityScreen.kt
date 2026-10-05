@@ -6,8 +6,10 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -139,28 +141,31 @@ fun HumidityScreen(navController: NavController, index: Int = 0, locationId: Str
             Gap(14.dp)
             ScaleCard {
                 dewPointScaleTemps.forEachIndexed { index, pair ->
-                    ListItem(
-                        modifier = Modifier.height(45.dp),
-                        colors = ListItemDefaults.colors(containerColor = Color.Transparent),
-                        leadingContent = {
-                            AvatarIcon(
-                                R.drawable.wb_sunny_24px,
-                                containerColor = dewPointScaleColors[index],
-                                contentColor = Color.White
-                            )
-                        },
-                        content = { Text(dewPointScaleText[index]) },
-                        trailingContent = {
-                            Text(
-                                if (units.tempUnit == TemperatureUnit.FAHRENHEIT) pair.second else pair.first,
-                                color = MaterialTheme.colorScheme.onSurface,
-                                style = MaterialTheme.typography.bodyLarge
-                            )
-                        }
-                    )
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        AvatarIcon(
+                            R.drawable.wb_sunny_24px,
+                            containerColor = dewPointScaleColors[index],
+                            contentColor = Color.White
+                        )
+                        androidx.compose.foundation.layout.Spacer(Modifier.width(14.dp))
+                        Text(
+                            dewPointScaleText[index],
+                            color = MaterialTheme.colorScheme.onSurface,
+                            style = MaterialTheme.typography.titleMedium,
+                            modifier = Modifier.weight(1f)
+                        )
+                        Text(
+                            if (units.tempUnit == TemperatureUnit.FAHRENHEIT) pair.second else pair.first,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+                    }
                 }
-
-
             }
             Gap(WindowInsets.systemBars.asPaddingValues().calculateBottomPadding() + 30.dp)
 

@@ -2,29 +2,25 @@ package com.pranshulgg.weather_master_app.feature.main.ui
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.ListItem
-import androidx.compose.material3.ListItemDefaults
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.pranshulgg.weather_master_app.R
 import com.pranshulgg.weather_master_app.core.model.domain.alerts.Alert
 import com.pranshulgg.weather_master_app.core.model.weather.alerts.AlertSeverity
-import com.pranshulgg.weather_master_app.core.prefs.AppPrefs
 import com.pranshulgg.weather_master_app.core.prefs.AppPrefsState
-import com.pranshulgg.weather_master_app.core.ui.components.SettingSection
 import com.pranshulgg.weather_master_app.core.ui.components.Symbol
-import com.pranshulgg.weather_master_app.core.ui.theme.ShadowElevation
 import com.pranshulgg.weather_master_app.core.utils.formatters.getLocalizedPattern
 import com.pranshulgg.weather_master_app.core.utils.formatters.safeZoneId
 import java.time.Instant
-import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
 @Composable
@@ -34,48 +30,46 @@ fun AlertsSection(
     zoneId: String,
     onAlertClick: () -> Unit
 ) {
-
     val pattern = getLocalizedPattern(
-        if (prefs.is24HrTimeFormat) "MMMddHmm" else "MMMddhmma"
+        if (prefs.is24HrTimeFormat) "MMMddHmm" else "MMddhmma"
     )
     val formatter: (Long) -> String = {
-        val formatter = DateTimeFormatter.ofPattern(pattern)
+        val fmt = DateTimeFormatter.ofPattern(pattern)
         val instant = Instant.ofEpochMilli(it)
         val dateTime = instant.atZone(safeZoneId(zoneId)).toLocalDateTime()
-        formatter.format(dateTime)
+        fmt.format(dateTime)
     }
 
-    Surface(
-        color = MaterialTheme.colorScheme.surface,
-        shape = MaterialTheme.shapes.extraLarge,
-        shadowElevation = ShadowElevation.level2
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-        ) {
-            alerts.forEach {
-                ListItem(
-                    colors = ListItemDefaults.colors(
-                        containerColor = Color.Transparent
-                    ),
-                    modifier = Modifier.clickable(onClick = onAlertClick),
-                    leadingContent = {
-                        Symbol(
-                            R.drawable.warning_24px,
-                            color = it.severity?.color ?: AlertSeverity.UNKNOWN.color,
-                            size = 32.dp
-                        )
-                    },
-                    content = { Text(it.event) },
-                    supportingContent = {
-                        if (it.effective != null && it.expires != null) {
-                            Text("${formatter(it.effective)} • ${formatter(it.expires)}")
-                        }
-                    }
+    Column(modifier = Modifier.fillMaxWidth()) {
+        alerts.forEach { alert ->
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable(onClick = onAlertClick)
+                    .padding(vertical = 10.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Symbol(
+                    R.drawable.warning_24px,
+                    color = alert.severity?.color ?: AlertSeverity.UNKNOWN.color,
+                    size = 28.dp
                 )
+                Spacer(modifier = Modifier.width(12.dp))
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        alert.event,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        style = MaterialTheme.typography.titleLarge
+                    )
+                    if (alert.effective != null && alert.expires != null) {
+                        Text(
+                            "${formatter(alert.effective)} • ${formatter(alert.expires)}",
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                    }
+                }
             }
         }
-
     }
 }

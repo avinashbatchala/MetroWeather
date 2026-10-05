@@ -2,21 +2,21 @@ package com.pranshulgg.weather_master_app.core.ui.components
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.size
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.LoadingIndicator
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.pranshulgg.weather_master_app.core.ui.metro.MetroLoadingDots
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun LoadingPlaceholder() {
     Box(
         contentAlignment = Alignment.Center,
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 16.dp)
     ) {
-        LoadingIndicator(modifier = Modifier.size(60.dp))
+        MetroLoadingDots()
     }
 }

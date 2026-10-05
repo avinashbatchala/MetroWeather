@@ -6,10 +6,13 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.Text
@@ -176,13 +179,26 @@ fun SettingsScreen(navController: NavController) {
 
 @Composable
 private fun DonateListItem(headline: String, description: String, icon: Int, onClick: () -> Unit) {
-    ListItem(
-        colors = ListItemDefaults.colors(containerColor = Color.Transparent),
-        leadingContent = { WeatherIconBox(icon, size = 28.dp) },
-        content = { Text(headline) },
-        supportingContent = { Text(description) },
+    androidx.compose.foundation.layout.Row(
         modifier = Modifier
+            .fillMaxWidth()
             .clickable(onClick = onClick)
-            .padding(horizontal = 14.dp)
-    )
+            .padding(horizontal = 14.dp, vertical = 10.dp),
+        verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
+    ) {
+        WeatherIconBox(icon, size = 28.dp)
+        androidx.compose.foundation.layout.Spacer(Modifier.width(14.dp))
+        Column {
+            Text(
+                headline,
+                color = MaterialTheme.colorScheme.onSurface,
+                style = MaterialTheme.typography.titleMedium
+            )
+            Text(
+                description,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.bodySmall
+            )
+        }
+    }
 }

@@ -1,16 +1,9 @@
 package com.pranshulgg.weather_master_app.core.ui.components.tiles
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.ListItem
-import androidx.compose.material3.ListItemDefaults
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -27,44 +20,25 @@ fun CategoryTile(
     color: Color,
     iconColor: Color,
     onClick: () -> Unit,
-    itemBgColor: Color
+    itemBgColor: Color = Color.Unspecified
 ) {
-    Surface(
-        modifier = Modifier.fillMaxWidth(),
-        shape = shapes,
-    ) {
-        ListItem(
-            modifier = Modifier.clickable(
-                onClick = onClick
-            ),
-            leadingContent = { IconContainer(color, icon = leading, iconColor = iconColor) },
-            colors = ListItemDefaults.colors(
-                containerColor = itemBgColor
-            ),
-            content = { Text(headline) },
-            supportingContent = {
-                if (description != null) {
-                    Text(description)
-                }
-            }
-        )
-    }
+    FlatRow(
+        title = headline,
+        description = description,
+        leading = { IconContainer(color, icon = leading, iconColor = iconColor) },
+        onClick = onClick
+    )
 }
 
+/** Windows square icon chip (no circle). */
 @Composable
 fun IconContainer(color: Color, icon: Int, iconColor: Color) {
-    Surface(
-        shape = RoundedCornerShape(50.dp),
+    Box(
+        modifier = Modifier
+            .size(40.dp)
+            .background(color),
+        contentAlignment = Alignment.Center
     ) {
-        Box(
-            modifier = Modifier
-                .width(40.dp)
-                .height(40.dp)
-                .background(color = color),
-            contentAlignment = Alignment.Center
-        ) {
-            Symbol(icon, color = iconColor)
-        }
+        Symbol(icon, color = iconColor, size = 22.dp)
     }
-
 }

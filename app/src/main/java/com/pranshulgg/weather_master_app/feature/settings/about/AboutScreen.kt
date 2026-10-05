@@ -1,6 +1,7 @@
 package com.pranshulgg.weather_master_app.feature.settings.about
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -146,50 +147,39 @@ private fun AppVersionTile(
     isLoadingNewVersion: Boolean = false
 ) {
 
-    Surface(
+    androidx.compose.foundation.layout.Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp),
-        shape = RoundedCornerShape(ShapeRadius.Large),
+            .padding(horizontal = 16.dp, vertical = 10.dp),
+        verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
     ) {
-        ListItem(
-            leadingContent = {
-                Image(
-                    painter = painterResource(R.drawable.app_icon_512px),
-                    contentDescription = null,
-                    Modifier.size(40.dp)
-                )
-            },
-            colors = ListItemDefaults.colors(
-                containerColor = MaterialTheme.colorScheme.tertiaryContainer
-            ),
-            content = {
-                Text(
-                    "WeatherMaster",
-                    color = MaterialTheme.colorScheme.onTertiaryContainer,
-                    style = MaterialTheme.typography.bodyLarge
-                )
-            },
-            supportingContent = {
-                Text(
-                    description,
-                    color = MaterialTheme.colorScheme.onTertiaryContainer.copy(alpha = 0.7f),
-                    style = MaterialTheme.typography.bodyMedium,
-                    fontWeight = FontWeight.Bold
-                )
-            },
-            trailingContent = {
-                IconButton(
-                    enabled = !isLoadingNewVersion,
-                    onClick = onClick,
-                    colors = IconButtonDefaults.iconButtonColors(
-                        containerColor = MaterialTheme.colorScheme.tertiary
-                    ),
-                    shapes = IconButtonDefaults.shapes()
-                ) {
-                    Symbol(R.drawable.refresh_24px, color = MaterialTheme.colorScheme.onTertiary)
-                }
-            }
+        Image(
+            painter = painterResource(R.drawable.app_icon_512px),
+            contentDescription = null,
+            Modifier.size(44.dp)
         )
+        Gap(14.dp)
+        Column(
+            modifier = Modifier.weight(1f)
+        ) {
+            Text(
+                "MetroWeather",
+                color = MaterialTheme.colorScheme.onSurface,
+                style = MaterialTheme.typography.titleLarge
+            )
+            Text(
+                description,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.bodySmall
+            )
+        }
+        androidx.compose.foundation.layout.Box(
+            modifier = Modifier
+                .size(44.dp)
+                .clickable(enabled = !isLoadingNewVersion) { onClick() },
+            contentAlignment = androidx.compose.ui.Alignment.Center
+        ) {
+            Symbol(R.drawable.refresh_24px, color = MaterialTheme.colorScheme.onSurface)
+        }
     }
 }

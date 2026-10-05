@@ -1,31 +1,31 @@
 package com.pranshulgg.weather_master_app.feature.shared.components
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.ListItem
-import androidx.compose.material3.ListItemDefaults
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.pranshulgg.weather_master_app.R
-import com.pranshulgg.weather_master_app.core.ui.components.Gap
 import com.pranshulgg.weather_master_app.core.ui.components.Symbol
 import com.pranshulgg.weather_master_app.core.ui.components.WeatherIconBox
-import com.pranshulgg.weather_master_app.core.ui.theme.ShapeRadius
 
+/** Flat Windows 10 location row (weather glyph chip + light title + subtle subtitle). */
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun LocationItem(
     title: String,
@@ -36,98 +36,76 @@ fun LocationItem(
     isDefault: Boolean = false,
     onLongClick: () -> Unit,
     isDeviceLocation: Boolean = false,
-    shape: RoundedCornerShape,
+    shape: androidx.compose.foundation.shape.RoundedCornerShape = androidx.compose.foundation.shape.RoundedCornerShape(0.dp),
     isAlertAvailable: Boolean = false
 ) {
+    val onSurface = MaterialTheme.colorScheme.onSurface
+    val subtle = MaterialTheme.colorScheme.onSurfaceVariant
+    val contentColor = if (isSelected) MaterialTheme.colorScheme.primary else onSurface
 
-    val containerColor =
-        if (isSelected) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.surfaceBright
-    val contentColor =
-        if (isSelected) MaterialTheme.colorScheme.onSecondaryContainer else MaterialTheme.colorScheme.onSurface
-
-    val shape = if (isSelected) RoundedCornerShape(ShapeRadius.Large) else shape
-
-    Surface(
+    Row(
         modifier = Modifier
-            .clip(shape)
-            .combinedClickable(
-                onClick = onClick,
-                onLongClick = onLongClick
-            ),
-        shape = shape,
-        color = containerColor,
+            .fillMaxWidth()
+            .combinedClickable(onClick = onClick, onLongClick = onLongClick)
+            .padding(vertical = 10.dp),
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        ListItem(
-            colors = ListItemDefaults.colors(containerColor = containerColor),
-            leadingContent = {
-                Box(
-                    Modifier
-                        .size(52.dp)
-                        .background(
-                            MaterialTheme.colorScheme.surfaceContainer,
-                            shape = CircleShape
-                        ), contentAlignment = Alignment.Center
-                ) {
-                    WeatherIconBox(icon, size = 34.dp)
-                }
-            },
-            content = {
-                if (isDefault) TitleForDefaultLocation(
-                    contentColor,
-                    title
-                ) else Text(
+        Box(
+            modifier = Modifier
+                .size(44.dp)
+                .background(MaterialTheme.colorScheme.surfaceContainerHigh),
+            contentAlignment = Alignment.Center
+        ) {
+            WeatherIconBox(icon, size = 30.dp)
+        }
+        Spacer(modifier = Modifier.width(14.dp))
+        Column(modifier = Modifier.weight(1f)) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
                     title,
                     color = contentColor,
+                    style = MaterialTheme.typography.titleLarge.copy(
+                        fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Light
+                    ),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
-            },
-            supportingContent = {
-                if (!isAlertAvailable) {
-                    Text(
-                        description,
-                        color = if (isSelected) MaterialTheme.colorScheme.onSecondaryContainer.copy(
-                            0.8f
-                        ) else MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                } else {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Symbol(
-                            R.drawable.warning_24px,
-                            color = MaterialTheme.colorScheme.error,
-                            size = 16.dp
-                        )
-                        Gap(horizontal = 4.dp)
-                        Text(
-                            "Active alerts",
-                            color = MaterialTheme.colorScheme.error,
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
-
+                if (isDefault) {
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Symbol(R.drawable.home_pin_24px, color = contentColor, size = 16.dp)
                 }
-            },
-            trailingContent = {
-                if (isDeviceLocation) {
-                    Symbol(R.drawable.circle_circle_24px, color = contentColor)
-                }
-//                if (isAlertAvailable) {
-//                }
             }
-        )
+            if (isAlertAvailable) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Symbol(R.drawable.warning_24px, color = MaterialTheme.colorScheme.error, size = 14.dp)
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text(
+                        "Active alerts",
+                        color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold)
+                    )
+                }
+            } else {
+                Text(
+                    description,
+                    color = subtle,
+                    style = MaterialTheme.typography.bodySmall,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
+        }
+        if (isDeviceLocation) {
+            Symbol(R.drawable.circle_circle_24px, color = subtle)
+        }
     }
 }
 
 @Composable
 private fun TitleForDefaultLocation(contentColor: Color, title: String) {
     Row(verticalAlignment = Alignment.CenterVertically) {
-        Text(
-            title, color = contentColor,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis
-        )
-        Gap(horizontal = 3.dp)
-        Symbol(R.drawable.home_pin_24px, color = contentColor, size = 18.dp)
+        Text(title, color = contentColor, maxLines = 1, overflow = TextOverflow.Ellipsis)
+        Spacer(modifier = Modifier.width(4.dp))
+        Symbol(R.drawable.home_pin_24px, color = contentColor, size = 16.dp)
     }
 }
-

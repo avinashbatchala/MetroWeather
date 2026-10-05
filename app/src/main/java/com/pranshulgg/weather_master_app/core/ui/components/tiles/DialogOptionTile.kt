@@ -1,32 +1,14 @@
 package com.pranshulgg.weather_master_app.core.ui.components.tiles
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.ListItem
-import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.RadioButton
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,16 +18,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
 import com.pranshulgg.weather_master_app.R
-import com.pranshulgg.weather_master_app.core.ui.theme.ShapeRadius
+import com.pranshulgg.weather_master_app.core.ui.metro.MetroButton
+import com.pranshulgg.weather_master_app.core.ui.metro.MetroDialogBox
+import com.pranshulgg.weather_master_app.core.ui.metro.MetroRadioGroup
 
 data class DialogOption<T>(
     val value: T,
     val label: String
 )
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun <T> DialogOptionTile(
     headline: String,
@@ -56,170 +38,45 @@ fun <T> DialogOptionTile(
     leading: @Composable (() -> Unit)? = null,
     shapes: RoundedCornerShape,
     dialogTitle: String? = null,
-    itemBgColor: Color
+    itemBgColor: Color = Color.Unspecified
 ) {
     var showDialog by remember { mutableStateOf(false) }
     val selectedLabel = options.find { it.value == selectedOption }?.label
 
-    val description: @Composable (() -> Unit)? = description?.let {
-        {
-            Text(
-                description,
-            )
-        }
-    } ?: selectedLabel?.let {
-        {
-            Text(
-                selectedLabel,
-                color = MaterialTheme.colorScheme.tertiary,
-                style = MaterialTheme.typography.bodyMedium
-            )
-        }
-    }
-
-    Surface(
-        modifier = Modifier.fillMaxWidth(),
-
-        shape = shapes,
-    ) {
-        ListItem(
-
-            modifier = Modifier
-                .clickable { showDialog = true },
-            colors = ListItemDefaults.colors(
-                containerColor = itemBgColor
-            ),
-            leadingContent = leading,
-            headlineContent = { Text(headline) },
-            supportingContent = description,
-        )
-    }
+    FlatRow(
+        title = headline,
+        description = description ?: selectedLabel,
+        leading = leading,
+        onClick = { showDialog = true }
+    )
 
     if (showDialog) {
         var tempSelection by remember { mutableStateOf(selectedOption) }
-        val listState = rememberLazyListState()
-
-        val showTopDivider by remember {
-            derivedStateOf {
-                listState.firstVisibleItemIndex > 0 || listState.firstVisibleItemScrollOffset > 0
-            }
-        }
-
-        val showBottomDivider by remember {
-            derivedStateOf {
-                val info = listState.layoutInfo
-                val total = info.totalItemsCount
-                val lastVisible = info.visibleItemsInfo.lastOrNull()?.index ?: -1
-                total > 0 && lastVisible < total - 1
-            }
-        }
-
-        Dialog(
-            onDismissRequest = {
-                showDialog = false
-            }
-        ) {
-
-            Surface(
-                modifier = Modifier
-                    .width(300.dp)
-                    .heightIn(max = 500.dp),
-                shape = RoundedCornerShape(ShapeRadius.ExtraLarge),
-                color = MaterialTheme.colorScheme.surfaceContainerHigh,
-                shadowElevation = 6.dp
+        MetroDialogBox(onDismiss = { showDialog = false }) {
+            Text(
+                text = dialogTitle ?: headline,
+                style = MaterialTheme.typography.headlineSmall.copy(color = MaterialTheme.colorScheme.onSurface)
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            MetroRadioGroup(
+                options = options.map { it.label },
+                selectedIndex = options.indexOfFirst { it.value == tempSelection },
+                onSelect = { index -> tempSelection = options[index].value }
+            )
+            Spacer(modifier = Modifier.height(12.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(10.dp, Alignment.End)
             ) {
-                Column() {
-                    Text(
-                        dialogTitle ?: headline,
-                        style = MaterialTheme.typography.headlineSmall,
-                        color = MaterialTheme.colorScheme.onSurface,
-                        modifier = Modifier.padding(top = 24.dp, start = 24.dp, end = 24.dp)
-                    )
-                    Spacer(Modifier.height(16.dp))
-                    Box(
-                        modifier = Modifier
-                            .weight(1f, fill = false)
-                            .fillMaxWidth()
-
-                    ) {
-                        LazyColumn(
-                            state = listState,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                        ) {
-                            itemsIndexed(options) { index, option ->
-                                Row(
-                                    modifier = Modifier
-                                        .clickable { tempSelection = option.value }
-                                        .fillMaxWidth(),
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    Spacer(modifier = Modifier.width(16.dp))
-                                    RadioButton(
-                                        selected = option.value == tempSelection,
-                                        onClick = { tempSelection = option.value }
-                                    )
-                                    Spacer(modifier = Modifier.width(8.dp))
-                                    Text(
-                                        option.label,
-                                        color = MaterialTheme.colorScheme.onSurface,
-                                        style = MaterialTheme.typography.bodyLarge
-                                    )
-                                    Spacer(modifier = Modifier.width(16.dp))
-                                }
-                            }
-                        }
-
-                        androidx.compose.animation.AnimatedVisibility(
-                            visible = showTopDivider,
-                            modifier = Modifier.align(Alignment.TopCenter)
-                        ) {
-                            HorizontalDivider(modifier = Modifier.fillMaxWidth())
-                        }
-
-                        androidx.compose.animation.AnimatedVisibility(
-                            visible = showBottomDivider,
-                            modifier = Modifier.align(Alignment.BottomCenter)
-                        ) {
-                            HorizontalDivider(modifier = Modifier.fillMaxWidth())
-                        }
-
-                    }
-
-                    Spacer(Modifier.height(16.dp))
-
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(bottom = 24.dp, start = 24.dp, end = 24.dp),
-                        horizontalArrangement = Arrangement.End
-                    ) {
-                        TextButton(
-                            onClick = {
-                                showDialog = false
-                            },
-                            shapes = ButtonDefaults.shapes()
-                        ) {
-                            Text(
-                                stringResource(R.string.action_cancel),
-                                style = MaterialTheme.typography.labelLarge
-                            )
-                        }
-                        Spacer(Modifier.width(8.dp))
-                        TextButton(
-                            onClick = {
-                                tempSelection?.let { onOptionSelected(it) }
-                                showDialog = false
-                            },
-                            shapes = ButtonDefaults.shapes()
-                        ) {
-                            Text(
-                                stringResource(R.string.action_save),
-                                style = MaterialTheme.typography.labelLarge
-                            )
-                        }
-                    }
-                }
+                MetroButton(text = stringResource(R.string.action_cancel), onClick = { showDialog = false }, outlined = true)
+                MetroButton(
+                    text = stringResource(R.string.action_save),
+                    onClick = {
+                        tempSelection?.let { onOptionSelected(it) }
+                        showDialog = false
+                    },
+                    outlined = false
+                )
             }
         }
     }

@@ -1,140 +1,91 @@
 package com.pranshulgg.weather_master_app.feature.main.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.DrawerState
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TooltipAnchorPosition
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.pranshulgg.weather_master_app.R
 import com.pranshulgg.weather_master_app.core.model.domain.location.Location
-import com.pranshulgg.weather_master_app.core.ui.components.Gap
 import com.pranshulgg.weather_master_app.core.ui.components.Symbol
-import com.pranshulgg.weather_master_app.core.ui.components.Tooltip
 import com.pranshulgg.weather_master_app.core.ui.navigation.NavRoutes
-import com.pranshulgg.weather_master_app.core.ui.theme.ShadowElevation
-import com.pranshulgg.weather_master_app.core.ui.theme.isThemeDark
 import com.pranshulgg.weather_master_app.core.utils.weather.location.getFullLocationName
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class)
+/** Flat Windows 10 top bar: square menu / edit / settings actions and a light location title. */
 @Composable
 fun MainSearchBar(
-    isFroggyLayout: Boolean = true,
+    isFroggyLayout: Boolean = false,
     paddingValues: PaddingValues,
     navController: NavController,
     drawerState: DrawerState,
     activeLocation: Location?,
     onEditLocation: () -> Unit,
-    layoutDirection: LayoutDirection
+    layoutDirection: LayoutDirection,
+    onRefresh: () -> Unit = {}
 ) {
     val scope = rememberCoroutineScope()
     val showDrawer = {
         scope.launch {
-            drawerState.apply {
-                if (isClosed) open() else close()
-            }
+            drawerState.apply { if (isClosed) open() else close() }
         }
     }
 
     val startPadding = paddingValues.calculateStartPadding(layoutDirection)
     val endPadding = paddingValues.calculateEndPadding(layoutDirection)
 
-    Surface(
-        color = if (isFroggyLayout) getSearchBarColor(isDark = isThemeDark()) else MaterialTheme.colorScheme.surface,
-        shape = androidx.compose.ui.graphics.RectangleShape,
+    Row(
         modifier = Modifier
+            .fillMaxWidth()
+            .background(MaterialTheme.colorScheme.background)
             .padding(
-                top = paddingValues.calculateTopPadding() + 8.dp,
-                start = if (isFroggyLayout) startPadding.takeIf { it > 16.dp }
-                    ?: 16.dp else startPadding,
-                end = if (isFroggyLayout) endPadding.takeIf { it > 16.dp } ?: 16.dp else endPadding,
-            )
-            .clickable(
-                enabled = isFroggyLayout,
-                onClick = {
-                    showDrawer()
-                },
+                top = paddingValues.calculateTopPadding() + 4.dp,
+                start = startPadding,
+                end = endPadding
             ),
-
-        shadowElevation = if (isFroggyLayout) ShadowElevation.level1 else 0.dp
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        Row(
-            modifier = Modifier
-                .height(56.dp)
-                .fillMaxWidth()
-                .padding(horizontal = 4.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-
-            Tooltip("Show menu", preferredPosition = TooltipAnchorPosition.Below) {
-                IconButton(onClick = {
-                    showDrawer()
-                }) {
-                    Symbol(
-                        R.drawable.menu_24px,
-                        color = if (isFroggyLayout) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSurface
-                    )
-                }
-            }
-            Gap(horizontal = 4.dp)
-            Text(
-                getFullLocationName(activeLocation),
-                color = if (isFroggyLayout) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSurface,
-                style = MaterialTheme.typography.bodyLarge,
-                modifier = Modifier.weight(1f),
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
-            Gap(horizontal = 4.dp)
-            Tooltip("Edit location", preferredPosition = TooltipAnchorPosition.Below) {
-                IconButton(onClick = onEditLocation) {
-                    Symbol(
-                        R.drawable.edit_24px,
-                        color = if (isFroggyLayout) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSurface
-                    )
-                }
-            }
-            Tooltip("Settings", preferredPosition = TooltipAnchorPosition.Below) {
-                IconButton(onClick = {
-                    navController.navigate(NavRoutes.SETTINGS)
-                }) {
-                    Symbol(
-                        R.drawable.settings_24px,
-                        color = if (isFroggyLayout) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSurface
-                    )
-                }
-            }
-        }
+        BarAction(R.drawable.menu_24px, "Menu") { showDrawer() }
+        Text(
+            text = getFullLocationName(activeLocation),
+            color = MaterialTheme.colorScheme.onSurface,
+            style = MaterialTheme.typography.titleMedium,
+            modifier = Modifier.weight(1f),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+        )
+        BarAction(R.drawable.refresh_24px, "Refresh") { onRefresh() }
+        BarAction(R.drawable.edit_24px, "Edit location") { onEditLocation() }
+        BarAction(R.drawable.settings_24px, "Settings") { navController.navigate(NavRoutes.SETTINGS) }
     }
 }
 
-
 @Composable
-private fun getSearchBarColor(isDark: Boolean): Color {
-
-    return when (isDark) {
-        true -> MaterialTheme.colorScheme.surface.copy(0.4f)
-        false -> MaterialTheme.colorScheme.surfaceContainerLowest.copy(0.6f)
+private fun BarAction(icon: Int, description: String, onClick: () -> Unit) {
+    Box(
+        modifier = Modifier
+            .size(44.dp)
+            .clickable { onClick() },
+        contentAlignment = Alignment.Center
+    ) {
+        Symbol(icon, desc = description, color = MaterialTheme.colorScheme.onSurface, size = 22.dp)
     }
-
 }

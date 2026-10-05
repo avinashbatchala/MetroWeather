@@ -1,17 +1,9 @@
 package com.pranshulgg.weather_master_app.core.ui.components.tiles
 
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.ListItem
-import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import com.pranshulgg.weather_master_app.core.ui.theme.ShapeRadius
 
 @Composable
 fun ActionTile(
@@ -22,45 +14,23 @@ fun ActionTile(
     onClick: () -> Unit,
     colorDesc: Color = MaterialTheme.colorScheme.onSurfaceVariant,
     danger: Boolean = false,
-    itemBgColor: Color,
+    itemBgColor: Color = Color.Unspecified,
     selected: Boolean = false,
     trailing: @Composable (() -> Unit)? = null,
     overline: @Composable (() -> Unit)? = null,
 ) {
-
-    val description: @Composable (() -> Unit)? = description?.let {
-
-        {
-            Text(
-                description,
-                color = colorDesc,
-                style = MaterialTheme.typography.bodyMedium
-            )
+    FlatRow(
+        title = headline,
+        description = description,
+        leading = leading,
+        trailing = trailing,
+        overline = overline,
+        selected = selected,
+        onClick = onClick,
+        titleColor = when {
+            danger -> MaterialTheme.colorScheme.error
+            selected -> MaterialTheme.colorScheme.primary
+            else -> null
         }
-    }
-
-    Surface(
-        modifier = Modifier.fillMaxWidth(),
-        shape = if (selected) RoundedCornerShape(ShapeRadius.Large) else shapes,
-    ) {
-        ListItem(
-            modifier = Modifier.clickable(
-                onClick = onClick
-            ),
-            leadingContent = leading,
-            colors = ListItemDefaults.colors(
-                containerColor = if (selected) MaterialTheme.colorScheme.secondaryContainer else if (danger) MaterialTheme.colorScheme.errorContainer else itemBgColor
-            ),
-            content = {
-                Text(
-                    headline,
-                    color = if (selected) MaterialTheme.colorScheme.onSecondaryContainer else if (danger) MaterialTheme.colorScheme.onErrorContainer else MaterialTheme.colorScheme.onSurface,
-                    style = MaterialTheme.typography.bodyLarge
-                )
-            },
-            supportingContent = description,
-            overlineContent = overline,
-            trailingContent = trailing
-        )
-    }
+    )
 }

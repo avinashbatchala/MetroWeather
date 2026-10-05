@@ -1,24 +1,19 @@
 package com.pranshulgg.weather_master_app.feature.search
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.FloatingToolbarDefaults
-import androidx.compose.material3.FloatingToolbarDefaults.ScreenOffset
-import androidx.compose.material3.FloatingToolbarExitDirection.Companion.Bottom
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonDefaults
-import androidx.compose.material3.LoadingIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SheetValue
-import androidx.compose.material3.Text
 import androidx.compose.material3.rememberBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -26,8 +21,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -38,19 +33,17 @@ import com.pranshulgg.weather_master_app.core.model.domain.weather.ApiKey
 import com.pranshulgg.weather_master_app.core.model.sources.SearchSource
 import com.pranshulgg.weather_master_app.core.model.sources.Source
 import com.pranshulgg.weather_master_app.core.prefs.LocalAppPrefs
-import com.pranshulgg.weather_master_app.core.ui.components.EmptyContainerPlaceholder
-import com.pranshulgg.weather_master_app.core.ui.components.Gap
 import com.pranshulgg.weather_master_app.core.ui.components.LargeTopBarScaffold
-import com.pranshulgg.weather_master_app.core.ui.components.LoadingScreenPlaceholder
 import com.pranshulgg.weather_master_app.core.ui.components.NavigateUpBtn
-import com.pranshulgg.weather_master_app.core.ui.components.SettingSection
-import com.pranshulgg.weather_master_app.core.ui.components.SettingTile
 import com.pranshulgg.weather_master_app.core.ui.components.Symbol
+import com.pranshulgg.weather_master_app.core.ui.metro.MetroEmpty
+import com.pranshulgg.weather_master_app.core.ui.metro.MetroListRow
+import com.pranshulgg.weather_master_app.core.ui.metro.MetroSearchBox
 import com.pranshulgg.weather_master_app.core.ui.navigation.NavRoutes
 import com.pranshulgg.weather_master_app.core.utils.formatters.toTitleCase
-import com.pranshulgg.weather_master_app.feature.search.ui.SearchFloatingToolbar
 import com.pranshulgg.weather_master_app.feature.search.ui.SearchScreenBottomSheets
 import com.pranshulgg.weather_master_app.feature.shared.ui.SharedBottomSheet
+import kotlinx.coroutines.delay
 
 data class SearchUiState(
     val query: String = "",
@@ -60,8 +53,7 @@ data class SearchUiState(
     val apiKeys: List<ApiKey> = emptyList()
 )
 
-
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchScreen(navController: NavController) {
 
@@ -70,106 +62,80 @@ fun SearchScreen(navController: NavController) {
     val loading = viewModel.loading
     val uiState by viewModel.uiState
     val prefs = LocalAppPrefs.current
-    var selectedLocationId by remember { mutableStateOf("") }
     var selectedLocation by remember { mutableStateOf<Location?>(null) }
     val sheetState = rememberBottomSheetState(
         initialValue = SheetValue.Hidden,
         enabledValues = setOf(SheetValue.Expanded, SheetValue.Hidden)
     )
 
-
-
     LaunchedEffect(Unit) {
         viewModel.updateSource(prefs.searchSource, prefs)
     }
 
-    val scrollBehaviorToolbar =
-        FloatingToolbarDefaults.exitAlwaysScrollBehavior(exitDirection = Bottom)
-
-
+    LaunchedEffect(uiState.query) {
+        if (uiState.query.isNotBlank()) {
+            delay(300)
+            viewModel.search(uiState.query)
+        }
+    }
 
     LargeTopBarScaffold(
         title = stringResource(R.string.search),
         navigationIcon = { NavigateUpBtn(navController) },
-        bottomBar = {
-            SearchFloatingToolbar(scrollBehaviorToolbar, uiState, viewModel)
-        },
         actions = {
-            IconButton(
-                onClick = {
-                    viewModel.showSearchSourcePickerSheet()
-                },
-                shapes = IconButtonDefaults.shapes()
-            ) { Symbol(R.drawable.settings_24px) }
+            Box(
+                modifier = Modifier
+                    .size(44.dp)
+                    .clickable { viewModel.showSearchSourcePickerSheet() },
+                contentAlignment = Alignment.Center
+            ) {
+                Symbol(R.drawable.settings_24px, color = MaterialTheme.colorScheme.onSurface, size = 22.dp)
+            }
         }
-
-    ) { paddingValues ->
-        Box(
+    ) { _ ->
+        Column(
             modifier = Modifier
-                .padding(top = paddingValues.calculateTopPadding())
+                .fillMaxSize()
+                .padding(horizontal = 16.dp)
+                .verticalScroll(rememberScrollState())
         ) {
+            MetroSearchBox(
+                value = uiState.query,
+                onValueChange = viewModel::updateQuery,
+                placeholder = "city name",
+                leadingIcon = R.drawable.search_24px
+            )
+            Spacer(modifier = Modifier.height(8.dp))
 
-            if (loading) {
-                LoadingScreenPlaceholder(0.8f)
-            }
-
-            if (results.isEmpty() && !loading) {
-                EmptyContainerPlaceholder(
-                    icon = R.drawable.search_24px,
-                    text = stringResource(R.string.search_empty_state_title),
-                    description = stringResource(R.string.search_empty_state_secondary)
-                )
-            }
-
-            if (results.isNotEmpty() && !loading) {
-                Column(
-                    modifier = Modifier
-                        .nestedScroll(scrollBehaviorToolbar)
-                        .verticalScroll(rememberScrollState())
-                ) {
-                    Text(
-                        stringResource(
-                            R.string.search_results_provided,
-                            prefs.searchSource.displayName
-                        ),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        style = MaterialTheme.typography.bodyMedium,
-                        modifier = Modifier.padding(horizontal = 16.dp)
-                    )
-                    Gap(8.dp)
-                    SettingSection(
-                        tiles = results.map {
-                            SettingTile.ActionTile(
-                                title = it.name,
-                                description = "${if (it.state.isNotBlank()) "${it.state.toTitleCase()}, " else ""}${it.country.toTitleCase()}",
-                                trailing = {
-                                    if (selectedLocationId == it.id) {
-                                        LoadingIndicator()
-                                    }
-                                },
-                                onClick = {
-                                    if (selectedLocationId.isNotBlank()) return@ActionTile
-                                    selectedLocation = it
-                                    viewModel.showWeatherSourcesForLocationSheet()
-                                }
-                            )
+            when {
+                loading -> MetroEmpty("searching…")
+                uiState.query.isBlank() -> MetroEmpty("Type a city name to add a place.")
+                results.isEmpty() -> MetroEmpty("No places found.")
+                else -> {
+                    results.forEach { loc ->
+                        val subtitle = buildString {
+                            if (loc.state.isNotBlank()) append("${loc.state.toTitleCase()}, ")
+                            append(loc.country.toTitleCase())
                         }
-                    )
-
-                    Gap(
-                        WindowInsets.systemBars.asPaddingValues()
-                            .calculateBottomPadding() + ScreenOffset + 50.dp
-                    )
+                        MetroListRow(
+                            title = loc.name,
+                            subtitle = subtitle,
+                            leadingIcon = R.drawable.location_on_24px,
+                            onClick = {
+                                selectedLocation = loc
+                                viewModel.showWeatherSourcesForLocationSheet()
+                            }
+                        )
+                    }
                 }
             }
+
+            Spacer(modifier = Modifier.height(24.dp))
         }
     }
 
-
-    // PROVIDERS SHEET
     SearchScreenBottomSheets.SearchSourcePickerSheet(prefs, viewModel, uiState, sheetState)
 
-    // WEATHER SOURCES SHEET
     SharedBottomSheet.WeatherSourcesForLocationSheet(
         countryCode = selectedLocation?.countryCode,
         show = uiState.isWeatherSourcesForLocationSheetOpen,
@@ -179,11 +145,9 @@ fun SearchScreen(navController: NavController) {
             viewModel.saveLocation(
                 selectedLocation,
                 onBack = { navController.popBackStack() },
-                onReset = { selectedLocationId = "" },
+                onReset = { },
                 it
             )
-
-            selectedLocationId = selectedLocation?.id ?: ""
         },
         onDismiss = viewModel::hideWeatherSourcesForLocationSheet,
         sheetState = sheetState,
@@ -194,4 +158,3 @@ fun SearchScreen(navController: NavController) {
         apiKeys = uiState.apiKeys
     )
 }
-

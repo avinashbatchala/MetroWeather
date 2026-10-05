@@ -1,23 +1,27 @@
 package com.pranshulgg.weather_master_app.core.ui.components.tiles
 
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Popup
+import com.pranshulgg.weather_master_app.core.ui.metro.MetroButton
+import com.pranshulgg.weather_master_app.core.ui.metro.MetroDialogBox
+import com.pranshulgg.weather_master_app.core.ui.metro.MetroSlider
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun DialogSliderTile(
     headline: String,
@@ -31,86 +35,57 @@ fun DialogSliderTile(
     labelFormatter: (Float) -> String = { it.toString() },
     dialogTitle: String,
     isDescriptionAsValue: Boolean = false,
-    itemBgColor: Color
+    itemBgColor: Color = Color.Unspecified
 ) {
     var showDialog by remember { mutableStateOf(false) }
     var sliderValue by remember { mutableStateOf(initialValue) }
 
-
-    val description: @Composable (() -> Unit)? = description?.let {
-
-        {
-            Text(
-                description,
-                color = if (isDescriptionAsValue) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.onSurfaceVariant
-            )
-        }
-    } ?: {
-        Text(
-            text = labelFormatter(sliderValue),
-            color = MaterialTheme.colorScheme.tertiary
-        )
-    }
-
-    Surface(
-        modifier = Modifier.fillMaxWidth(),
-        shape = shapes,
-    ) {
-        ListItem(
-            modifier = Modifier.clickable { showDialog = true },
-            colors = ListItemDefaults.colors(
-                containerColor = itemBgColor
-            ),
-            leadingContent = leading,
-            content = { Text(headline) },
-            supportingContent = description,
-        )
-    }
+    FlatRow(
+        title = headline,
+        description = description ?: labelFormatter(sliderValue),
+        leading = leading,
+        onClick = { showDialog = true }
+    )
 
     if (showDialog) {
-        AlertDialog(
-            onDismissRequest = { showDialog = false },
-            title = { Text(dialogTitle) },
-            text = {
-                Column(
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    LabeledSlider(
-                        value = sliderValue,
-                        onValueChange = { sliderValue = it },
-                        valueRange = valueRange,
-                        steps = steps,
-                        labelFormatter = labelFormatter
-                    )
-                }
-            },
-            confirmButton = {
-
-                TextButton(
+        MetroDialogBox(onDismiss = { showDialog = false }) {
+            Text(
+                text = dialogTitle,
+                style = MaterialTheme.typography.headlineSmall.copy(color = MaterialTheme.colorScheme.onSurface)
+            )
+            Spacer(modifier = Modifier.height(10.dp))
+            Text(
+                text = labelFormatter(sliderValue),
+                style = MaterialTheme.typography.titleLarge.copy(color = MaterialTheme.colorScheme.primary)
+            )
+            Spacer(modifier = Modifier.height(6.dp))
+            LabeledSlider(
+                value = sliderValue,
+                onValueChange = { sliderValue = it },
+                valueRange = valueRange,
+                steps = steps,
+                labelFormatter = labelFormatter
+            )
+            Spacer(modifier = Modifier.height(14.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(10.dp, Alignment.End)
+            ) {
+                MetroButton(text = "Cancel", onClick = { showDialog = false }, outlined = true)
+                MetroButton(
+                    text = "Save",
                     onClick = {
                         onValueSubmitted(sliderValue)
                         showDialog = false
                     },
-                    shapes = ButtonDefaults.shapes()
-                ) {
-                    Text("Save", style = MaterialTheme.typography.labelLarge)
-                }
-            },
-            dismissButton = {
-                TextButton(
-                    onClick = { showDialog = false },
-                    shapes = ButtonDefaults.shapes()
-                ) {
-                    Text("Cancel", style = MaterialTheme.typography.labelLarge)
-                }
-
+                    outlined = false
+                )
             }
-        )
+        }
     }
 }
 
-
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+/** Thin Windows slider bound to a value range (no Material thumb/label bubble). */
 @Composable
 fun LabeledSlider(
     value: Float,
@@ -119,66 +94,12 @@ fun LabeledSlider(
     steps: Int,
     labelFormatter: (Float) -> String = { it.toString() }
 ) {
-    Box(
-        modifier = Modifier.fillMaxWidth(),
-        contentAlignment = Alignment.Center
-    ) {
-        var sliderWidth by remember { mutableIntStateOf(0) }
-        var showLabel by remember { mutableStateOf(false) }
-
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .onSizeChanged { sliderWidth = it.width }
-        ) {
-            val interactionSource = remember { MutableInteractionSource() }
-
-            Slider(
-                value = value,
-                onValueChange = {
-                    onValueChange(it)
-                    showLabel = true
-                },
-                valueRange = valueRange,
-                steps = steps,
-                interactionSource = interactionSource,
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            val fraction =
-                (value - valueRange.start) / (valueRange.endInclusive - valueRange.start)
-            val thumbOffsetPx = (fraction * sliderWidth).coerceIn(0f, sliderWidth.toFloat())
-
-            val scale by animateFloatAsState(targetValue = if (showLabel) 1f else 0.8f)
-            val alpha by animateFloatAsState(targetValue = if (showLabel) 1f else 0f)
-
-            LaunchedEffect(value) {
-                showLabel = true
-                kotlinx.coroutines.delay(1000)
-                showLabel = false
-            }
-
-            Popup(
-                offset = IntOffset((thumbOffsetPx - 48).toInt(), -90)
-            ) {
-                Surface(
-                    color = MaterialTheme.colorScheme.inverseSurface,
-                    shape = RoundedCornerShape(50.dp),
-                    shadowElevation = 2.dp,
-                    modifier = Modifier.graphicsLayer {
-                        this.scaleX = scale
-                        this.scaleY = scale
-                        this.alpha = alpha
-                    }
-                ) {
-                    Text(
-                        text = labelFormatter(value),
-                        modifier = Modifier.padding(horizontal = 14.dp, vertical = 10.dp),
-                        fontSize = 14.sp,
-                        color = MaterialTheme.colorScheme.inverseOnSurface
-                    )
-                }
-            }
-        }
+    val span = (valueRange.endInclusive - valueRange.start).takeIf { it != 0f } ?: 1f
+    val fraction = ((value - valueRange.start) / span).coerceIn(0f, 1f)
+    Column(modifier = Modifier.fillMaxWidth()) {
+        MetroSlider(
+            value = fraction,
+            onValueChange = { onValueChange(valueRange.start + it * span) }
+        )
     }
 }

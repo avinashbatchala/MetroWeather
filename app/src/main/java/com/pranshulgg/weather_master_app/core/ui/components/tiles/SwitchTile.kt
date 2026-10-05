@@ -1,22 +1,9 @@
 package com.pranshulgg.weather_master_app.core.ui.components.tiles
 
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.ListItem
-import androidx.compose.material3.ListItemDefaults
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Switch
-import androidx.compose.material3.SwitchDefaults
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
-import com.pranshulgg.weather_master_app.R
-import com.pranshulgg.weather_master_app.core.ui.components.Symbol
+import com.pranshulgg.weather_master_app.core.ui.metro.MetroToggle
 
 @Composable
 fun SwitchTile(
@@ -27,66 +14,22 @@ fun SwitchTile(
     leading: @Composable (() -> Unit)? = null,
     shapes: RoundedCornerShape,
     switchEnabled: Boolean = true,
-    itemBgColor: Color
+    itemBgColor: Color = Color.Unspecified
 ) {
-
-    val description: @Composable (() -> Unit)? = description?.let {
-        { Text(description) }
-    }
-
-    Surface(
-        modifier = Modifier.fillMaxWidth(),
-        shape = shapes,
-    ) {
-        ListItem(
-
-            modifier = if (switchEnabled) {
-                Modifier.clickable { onCheckedChange(!checked) }
-            } else {
-                Modifier
-            },
-
-            colors = ListItemDefaults.colors(
-                containerColor = itemBgColor
-            ),
-            leadingContent = leading,
-            content = { Text(headline) },
-            supportingContent = description,
-            trailingContent = {
-                Switch(
-                    enabled = switchEnabled,
-                    checked = checked,
-                    onCheckedChange = { newChecked ->
-                        if (checked != newChecked) {
-                            onCheckedChange(newChecked)
-                        }
-                    },
-                    thumbContent = if (checked) {
-                        {
-                            Symbol(
-                                R.drawable.check_24px,
-                                size = SwitchDefaults.IconSize,
-                                color = MaterialTheme.colorScheme.primary
-                            )
-
-                        }
-                    } else {
-                        {
-                            Symbol(
-                                R.drawable.close_24px,
-                                size = SwitchDefaults.IconSize,
-                                color = MaterialTheme.colorScheme.surfaceContainerHighest
-                            )
-
-                        }
-                    }
-                )
-            }
-        )
-    }
-
+    FlatRow(
+        title = headline,
+        description = description,
+        leading = leading,
+        onClick = if (switchEnabled) ({ onCheckedChange(!checked) }) else null,
+        trailing = {
+            MetroToggle(
+                checked = checked,
+                onCheckedChange = { if (checked != it) onCheckedChange(it) },
+                enabled = switchEnabled
+            )
+        }
+    )
 }
-
 
 @Composable
 fun SingleSwitchTile(
@@ -96,64 +39,19 @@ fun SingleSwitchTile(
     description: String? = null,
     leading: @Composable (() -> Unit)? = null,
     switchEnabled: Boolean = true,
-    itemBgColor: Color
-
+    itemBgColor: Color = Color.Unspecified
 ) {
-
-    val description: @Composable (() -> Unit)? = description?.let {
-
-        {
-            Text(description)
+    FlatRow(
+        title = headline,
+        description = description,
+        leading = leading,
+        onClick = if (switchEnabled) ({ onCheckedChange(!checked) }) else null,
+        trailing = {
+            MetroToggle(
+                checked = checked,
+                onCheckedChange = { if (checked != it) onCheckedChange(it) },
+                enabled = switchEnabled
+            )
         }
-    }
-    Surface(
-        modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(50.dp),
-    ) {
-        ListItem(
-
-            modifier = if (switchEnabled) {
-                Modifier
-                    .clickable { onCheckedChange(!checked) }
-                    .padding(start = 10.dp)
-            } else {
-                Modifier.padding(start = 10.dp)
-            },
-
-            leadingContent = leading,
-            content = { Text(headline) },
-            supportingContent = description,
-            trailingContent = {
-                Switch(
-                    enabled = switchEnabled,
-                    checked = checked,
-                    onCheckedChange = { newChecked ->
-                        if (checked != newChecked) {
-                            onCheckedChange(newChecked)
-                        }
-                    },
-                    thumbContent = if (checked) {
-                        {
-                            Symbol(
-                                R.drawable.check_24px,
-                                size = SwitchDefaults.IconSize,
-                                color = MaterialTheme.colorScheme.primary
-                            )
-
-                        }
-                    } else {
-                        {
-                            Symbol(
-                                R.drawable.close_24px,
-                                size = SwitchDefaults.IconSize,
-                                color = itemBgColor
-                            )
-
-                        }
-                    }
-                )
-            }
-        )
-    }
-
+    )
 }
