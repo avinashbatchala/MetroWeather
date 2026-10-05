@@ -48,7 +48,7 @@ fun HumidityHourlyCard(data: List<WeatherHourly>, zoneId: String) {
     }
 
     Surface(
-        color = MaterialTheme.colorScheme.surfaceBright,
+        color = MaterialTheme.colorScheme.surface,
         shape = MaterialTheme.shapes.extraLarge,
         shadowElevation = ShadowElevation.level2,
         modifier = Modifier.padding(horizontal = 16.dp)

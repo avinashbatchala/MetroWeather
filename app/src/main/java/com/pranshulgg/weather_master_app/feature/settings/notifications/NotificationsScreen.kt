@@ -223,7 +223,7 @@ fun NotificationsScreen(navController: NavController) {
                                 Date(chosenTime)
                             )
                         } else stringResource(R.string.label_disabled),
-                        colorDesc = MaterialTheme.colorScheme.tertiary,
+                        colorDesc = MaterialTheme.colorScheme.primary,
                         onClick = {
                             type = NotificationConfig.TODAY_FORECAST
 
@@ -259,7 +259,7 @@ fun NotificationsScreen(navController: NavController) {
                                 Date(chosenTimeNextDay)
                             )
                         } else stringResource(R.string.label_disabled),
-                        colorDesc = MaterialTheme.colorScheme.tertiary,
+                        colorDesc = MaterialTheme.colorScheme.primary,
                         onClick = {
                             type = NotificationConfig.NEXT_DAY_FORECAST
 

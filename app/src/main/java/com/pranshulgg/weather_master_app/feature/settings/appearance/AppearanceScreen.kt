@@ -88,7 +88,7 @@ fun AppearanceScreen(navController: NavController) {
                         onCheckedChange = { checked ->
                             prefs.setUseCustomTheme(checked)
                             if (!checked) {
-                                prefs.setCustomThemeColor("#2196f3")
+                                prefs.setCustomThemeColor("#0078d7")
                             }
                         }
                     ),

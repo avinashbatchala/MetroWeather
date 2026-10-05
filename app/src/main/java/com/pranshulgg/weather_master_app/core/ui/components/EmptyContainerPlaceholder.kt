@@ -55,7 +55,7 @@ fun EmptyContainerPlaceholder(
             modifier = Modifier
                 .height(containerSize)
                 .width(containerSize),
-            color = MaterialTheme.colorScheme.surfaceBright
+            color = MaterialTheme.colorScheme.surface
         ) {
 
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {

@@ -57,7 +57,7 @@ fun RainCanvas(
         }.toMutableStateList()
     }
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(canvasSize) {
 
         if (canvasSize == Size.Zero) return@LaunchedEffect
 

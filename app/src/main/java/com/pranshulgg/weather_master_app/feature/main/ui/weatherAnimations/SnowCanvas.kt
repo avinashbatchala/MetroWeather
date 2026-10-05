@@ -48,7 +48,7 @@ fun SnowCanvas(snowFlakeCount: Int = 30, isFroggyLayout: Boolean = true) {
         }.toMutableStateList()
     }
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(canvasSize) {
 
         if (canvasSize == Size.Zero) return@LaunchedEffect
 

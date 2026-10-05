@@ -71,7 +71,7 @@ fun MoonBlock(weather: Weather, dailyIndex: Int, prefs: AppPrefsState, onClickBl
                     .matchParentSize()
                     .align(Alignment.BottomCenter),
                 alignment = Alignment.BottomCenter,
-                colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.tertiaryContainer)
+                colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.surfaceContainerHigh)
             )
 
 

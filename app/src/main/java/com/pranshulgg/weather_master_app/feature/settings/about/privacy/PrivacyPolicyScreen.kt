@@ -136,7 +136,7 @@ fun PrivacyPolicyScreen(navController: NavController) {
                             style = SpanStyle(
                                 fontWeight = FontWeight.Bold,
                                 textDecoration = TextDecoration.Underline,
-                                color = MaterialTheme.colorScheme.tertiary
+                                color = MaterialTheme.colorScheme.primary
                             ),
 
                             ) {

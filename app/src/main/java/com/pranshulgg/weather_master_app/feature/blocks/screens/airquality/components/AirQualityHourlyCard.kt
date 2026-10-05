@@ -68,7 +68,7 @@ fun AirQualityHourlyCard(data: List<AirQualityHourly>, zoneId: String, airQualit
 
     val min = 0.0
     Surface(
-        color = MaterialTheme.colorScheme.surfaceBright,
+        color = MaterialTheme.colorScheme.surface,
         shape = MaterialTheme.shapes.extraLarge,
         shadowElevation = ShadowElevation.level2,
         modifier = Modifier.padding(horizontal = 16.dp)

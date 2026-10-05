@@ -30,7 +30,7 @@ import com.pranshulgg.weather_master_app.core.ui.theme.ThemeVariantType
 
 private val scheme = listOf(
     "#f44336", "#ff5252", "#e91e63", "#ff4081", "#9c27b0", "#e040fb", "#673ab7",
-    "#7c4dff", "#3f51b5", "#536dfe", "#2196f3", "#448aff", "#03a9f4", "#40c4ff",
+    "#7c4dff", "#3f51b5", "#536dfe", "#0078d7", "#448aff", "#03a9f4", "#40c4ff",
     "#00bcd4", "#18ffff", "#009688", "#64ffda", "#4caf50", "#69f0ae", "#8bc34a",
     "#b2ff59", "#cddc39", "#eeff41", "#ffeb3b", "#ffff00", "#ffc107", "#ffd740",
     "#ff9800", "#ffab40", "#ff5722", "#ff6e40", "#795548", "#607d8b", "#9e9e9e"

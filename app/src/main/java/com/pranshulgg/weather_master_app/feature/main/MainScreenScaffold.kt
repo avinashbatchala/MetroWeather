@@ -5,7 +5,6 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -14,10 +13,12 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -28,8 +29,11 @@ import com.pranshulgg.weather_master_app.data.store.WeatherBlocksStoreState
 import com.pranshulgg.weather_master_app.data.store.WeatherStoreState
 import com.pranshulgg.weather_master_app.data.store.WeatherUnitsStoreState
 import com.pranshulgg.weather_master_app.feature.main.components.MainSearchBar
+import com.pranshulgg.weather_master_app.feature.main.ui.LocalWeatherForeground
+import com.pranshulgg.weather_master_app.feature.main.ui.WeatherBackground
 import com.pranshulgg.weather_master_app.feature.main.ui.layouts.PhoneLayout
 import com.pranshulgg.weather_master_app.feature.main.ui.layouts.TabletLayout
+import com.pranshulgg.weather_master_app.feature.main.ui.weatherForeground
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -58,53 +62,40 @@ fun MainScreenScaffold(
     val isFroggyLayout = false
     val isShowSummary = prefs.isShowSummary
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.Black)
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .statusBarsPadding()
-        ) {
-            AnimatedContent(
-                modifier = Modifier.fillMaxSize(),
-                targetState = weather,
-                contentKey = { it?.location?.id },
-                transitionSpec = { fadeIn() togetherWith fadeOut() }
-            ) { weather ->
-                Column(modifier = Modifier.fillMaxSize()) {
-                    MainSearchBar(
-                        isFroggyLayout = isFroggyLayout,
-                        paddingValues = PaddingValues(0.dp),
-                        navController = navController,
-                        activeLocation = activeLocation,
-                        onEditLocation = onEditLocation,
-                        layoutDirection = layoutDirection,
-                        onRefresh = onRefresh
-                    )
-                    if (weather != null) {
-                        if (!isTabletLike) {
-                            PhoneLayout(
-                                weather,
-                                units,
-                                context,
-                                isFroggyLayout,
-                                navController,
-                                alerts,
-                                prefs,
-                                onWeatherSourceInfoClick,
-                                isShowSummary,
-                                airQuality,
-                                weatherBlocks,
-                                onUpdateBlocks,
-                                onLocationSelect,
-                                modifier = Modifier.weight(1f)
-                            )
-                        } else {
-                            Box(modifier = Modifier.weight(1f)) {
-                                TabletLayout(
+    var parallax by remember { mutableFloatStateOf(0f) }
+    val foreground = weatherForeground()
+
+    CompositionLocalProvider(LocalWeatherForeground provides foreground) {
+        Box(modifier = Modifier.fillMaxSize()) {
+            WeatherBackground(
+                weather = weather,
+                showAnimations = prefs.isShowWeatherAnimations,
+                parallaxPx = parallax
+            )
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .statusBarsPadding()
+            ) {
+                AnimatedContent(
+                    modifier = Modifier.fillMaxSize(),
+                    targetState = weather,
+                    contentKey = { it?.location?.id },
+                    transitionSpec = { fadeIn() togetherWith fadeOut() }
+                ) { weather ->
+                    Column(modifier = Modifier.fillMaxSize()) {
+                        MainSearchBar(
+                            isFroggyLayout = isFroggyLayout,
+                            paddingValues = PaddingValues(0.dp),
+                            navController = navController,
+                            activeLocation = activeLocation,
+                            onEditLocation = onEditLocation,
+                            layoutDirection = layoutDirection,
+                            onRefresh = onRefresh
+                        )
+                        if (weather != null) {
+                            if (!isTabletLike) {
+                                PhoneLayout(
                                     weather,
                                     units,
                                     context,
@@ -115,11 +106,31 @@ fun MainScreenScaffold(
                                     onWeatherSourceInfoClick,
                                     isShowSummary,
                                     airQuality,
-                                    PaddingValues(0.dp),
-                                    layoutDirection,
                                     weatherBlocks,
-                                    onUpdateBlocks
+                                    onUpdateBlocks,
+                                    onLocationSelect,
+                                    onScroll = { parallax = -it * 0.25f },
+                                    modifier = Modifier.weight(1f)
                                 )
+                            } else {
+                                Box(modifier = Modifier.weight(1f)) {
+                                    TabletLayout(
+                                        weather,
+                                        units,
+                                        context,
+                                        isFroggyLayout,
+                                        navController,
+                                        alerts,
+                                        prefs,
+                                        onWeatherSourceInfoClick,
+                                        isShowSummary,
+                                        airQuality,
+                                        PaddingValues(0.dp),
+                                        layoutDirection,
+                                        weatherBlocks,
+                                        onUpdateBlocks
+                                    )
+                                }
                             }
                         }
                     }

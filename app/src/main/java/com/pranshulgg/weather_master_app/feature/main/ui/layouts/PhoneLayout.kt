@@ -1,7 +1,9 @@
 package com.pranshulgg.weather_master_app.feature.main.ui.layouts
 
 import android.content.Context
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,12 +20,19 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.pranshulgg.weather_master_app.R
 import com.pranshulgg.weather_master_app.core.model.domain.airquality.AirQuality
@@ -36,9 +45,9 @@ import com.pranshulgg.weather_master_app.core.model.weather.WeatherCondition
 import com.pranshulgg.weather_master_app.core.model.weather.toIcon
 import com.pranshulgg.weather_master_app.core.model.weather.toLabel
 import com.pranshulgg.weather_master_app.core.prefs.AppPrefsState
+import com.pranshulgg.weather_master_app.core.ui.components.Symbol
 import com.pranshulgg.weather_master_app.core.ui.components.WeatherIconBox
 import com.metro.ui.components.MetroButton
-import com.metro.ui.components.MetroDetailGrid
 import com.metro.ui.components.MetroEmpty
 import com.metro.ui.components.MetroListRow
 import com.metro.ui.components.MetroPivot
@@ -54,12 +63,13 @@ import com.pranshulgg.weather_master_app.core.utils.formatters.toWeekdayString
 import com.pranshulgg.weather_master_app.core.utils.weather.forecast.findMatchingHourly
 import com.pranshulgg.weather_master_app.core.utils.weather.location.getFullLocationName
 import com.pranshulgg.weather_master_app.data.store.WeatherBlocksStoreState
+import com.pranshulgg.weather_master_app.feature.main.ui.LocalWeatherForeground
 import kotlin.math.roundToInt
 
 /**
- * Windows 10 Mobile weather home: black canvas, condition-coloured hero and a
- * swipeable `now · hourly · daily · places` pivot. Content mirrors the wphone
- * MSN Weather app, restyled to the Metro language shared with the launcher.
+ * Windows 10 Mobile weather home: an immersive condition scene behind a
+ * `now · hourly · daily · places` pivot. Content mirrors the wphone MSN Weather
+ * app, restyled to the Metro language shared with the launcher.
  */
 @Composable
 fun PhoneLayout(
@@ -76,34 +86,35 @@ fun PhoneLayout(
     weatherBlocks: WeatherBlocksStoreState,
     onUpdateBlocks: (List<WeatherBlock>) -> Unit,
     onLocationSelect: (com.pranshulgg.weather_master_app.core.model.domain.location.Location) -> Unit = {},
+    onScroll: (Float) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
-    Column(modifier = modifier.fillMaxSize()) {
-        Column(modifier = Modifier.padding(horizontal = PageInset, vertical = 2.dp)) {
-            Text(
-                text = "METROWEATHER",
-                style = MaterialTheme.typography.labelMedium.copy(color = MaterialTheme.colorScheme.primary)
-            )
-            Text(
-                text = (weather.location.customName ?: weather.location.name).lowercase(),
-                style = MaterialTheme.typography.headlineLarge.copy(
-                    color = MaterialTheme.colorScheme.onSurface,
-                    fontWeight = FontWeight.Light
-                )
-            )
-        }
+    var currentPage by remember { mutableIntStateOf(0) }
+    val foreground = LocalWeatherForeground.current
 
+    Column(modifier = modifier.fillMaxSize()) {
         MetroPivot(
             titles = listOf("now", "hourly", "daily", "places"),
+            activeColor = foreground,
+            inactiveColor = foreground.copy(alpha = 0.55f),
+            onPageChanged = { currentPage = it },
             modifier = Modifier.weight(1f)
         ) { page ->
+            val report: (Float) -> Unit = { value -> if (page == currentPage) onScroll(value) }
             when (page) {
-                0 -> NowPage(weather, units, context, alerts, prefs.is24HrTimeFormat)
+                0 -> NowPage(weather, units, context, alerts, prefs.is24HrTimeFormat, report)
                 1 -> HourlyPage(weather, units, context, prefs)
-                2 -> DailyPage(weather, units, context, prefs)
+                2 -> DailyPage(weather, units, context, prefs, report)
                 else -> PlacesPage(weather, units, navController, onLocationSelect)
             }
         }
+    }
+}
+
+@Composable
+private fun ReportScroll(state: ScrollState, onScroll: (Float) -> Unit) {
+    LaunchedEffect(state) {
+        snapshotFlow { state.value }.collect { onScroll(it.toFloat()) }
     }
 }
 
@@ -113,14 +124,19 @@ private fun NowPage(
     units: WeatherUnits,
     context: Context,
     alerts: List<Alert>,
-    is24: Boolean
+    is24: Boolean,
+    onScroll: (Float) -> Unit
 ) {
+    val scroll = rememberScrollState()
+    val foreground = LocalWeatherForeground.current
+
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .verticalScroll(rememberScrollState())
+            .verticalScroll(scroll)
             .padding(horizontal = PageInset)
     ) {
+        ReportScroll(scroll, onScroll)
         WeatherHero(weather, units, context)
 
         if (alerts.isNotEmpty()) {
@@ -140,27 +156,27 @@ private fun NowPage(
         }.ifBlank { "--" }
 
         MetroSectionHeader("details")
-        MetroDetailGrid(
+        DetailGrid(
             entries = listOf(
-                "wind" to windText,
-                "humidity" to (current.humidity?.let { "${it.roundToInt()}%" } ?: "--"),
-                "pressure" to (current.pressureMsl?.let { "${it.roundToInt()} hPa" } ?: "--"),
-                "uv index" to (current.uvIndex?.let { "${it.roundToInt()} ${uvLabel(it)}" } ?: "--"),
-                "visibility" to (current.visibility?.let { "${(it / 1000.0).let { km -> (km * 10).roundToInt() / 10.0 }} km" } ?: "--"),
-                "precipitation" to (today?.precipitationProbabilityMax?.let { "$it%" } ?: "--"),
-                "sunrise" to formatTime(today?.sunrise, weather.location.timezone, is24),
-                "sunset" to formatTime(today?.sunset, weather.location.timezone, is24)
+                Triple(R.drawable.air_24px, "Wind", windText),
+                Triple(R.drawable.humidity_percentage_24px, "Humidity", current.humidity?.let { "${it.roundToInt()}%" } ?: "--"),
+                Triple(R.drawable.compress_24px, "Pressure", current.pressureMsl?.let { "${it.roundToInt()} hPa" } ?: "--"),
+                Triple(R.drawable.wb_sunny_24px, "UV index", current.uvIndex?.let { "${it.roundToInt()} ${uvLabel(it)}" } ?: "--"),
+                Triple(R.drawable.visibility_24px, "Visibility", current.visibility?.let { v -> "${(v / 1000.0).let { km -> (km * 10).roundToInt() / 10.0 }} km" } ?: "--"),
+                Triple(R.drawable.water_drop_24px, "Precipitation", today?.precipitationProbabilityMax?.let { "$it%" } ?: "--"),
+                Triple(R.drawable.wb_sunny_24px, "Sunrise", formatTime(today?.sunrise, weather.location.timezone, is24)),
+                Triple(R.drawable.bedtime_24px, "Sunset", formatTime(today?.sunset, weather.location.timezone, is24))
             )
         )
 
         Spacer(modifier = Modifier.height(12.dp))
         Text(
             text = getFullLocationName(weather.location),
-            style = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.onSurfaceVariant)
+            style = MaterialTheme.typography.bodySmall.copy(color = foreground.copy(alpha = 0.7f))
         )
         Text(
             text = "Updated ${getLastUpdatedTimeString(context, current.lastUpdatedInMilli)} · Open-Meteo",
-            style = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.onSurfaceVariant),
+            style = MaterialTheme.typography.bodySmall.copy(color = foreground.copy(alpha = 0.7f)),
             modifier = Modifier.padding(bottom = 24.dp)
         )
     }
@@ -178,41 +194,73 @@ private fun WeatherHero(weather: Weather, units: WeatherUnits, context: Context)
         daily = today,
         targetTimeMilli = getCurrentTimeFor(weather.location.timezone)
     )
+    val foreground = LocalWeatherForeground.current
 
-    Box(
+    Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 8.dp)
-            .background(conditionColor(current.weatherCondition), RectangleShape)
+            .padding(top = 20.dp, bottom = 18.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Column(modifier = Modifier.padding(18.dp)) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(
-                    text = "${temp ?: "-"}°",
-                    style = MaterialTheme.typography.displayLarge,
-                    fontWeight = FontWeight.Light,
-                    color = Color.White
-                )
-                Spacer(modifier = Modifier.width(12.dp))
-                WeatherIconBox(icon, size = 64.dp)
+        WeatherIconBox(icon, size = 68.dp)
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(
+            text = "${temp ?: "-"}°",
+            style = MaterialTheme.typography.displayLarge.copy(fontSize = 92.sp, lineHeight = 96.sp),
+            fontWeight = FontWeight.Light,
+            color = foreground
+        )
+        Text(
+            text = current.weatherCondition.toLabel(context),
+            style = MaterialTheme.typography.titleLarge,
+            color = foreground
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(
+            text = "High ${high ?: "-"}°   Low ${low ?: "-"}°   Feels like ${feels ?: "-"}°",
+            style = MaterialTheme.typography.bodyMedium,
+            color = foreground.copy(alpha = 0.85f)
+        )
+    }
+}
+
+@Composable
+private fun DetailGrid(entries: List<Triple<Int, String, String>>, modifier: Modifier = Modifier) {
+    Column(modifier = modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        entries.chunked(2).forEach { row ->
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                row.forEach { (icon, label, value) ->
+                    DetailTile(icon, label, value, Modifier.weight(1f))
+                }
+                if (row.size == 1) Spacer(modifier = Modifier.weight(1f))
             }
+        }
+    }
+}
+
+@Composable
+private fun DetailTile(icon: Int, label: String, value: String, modifier: Modifier = Modifier) {
+    val foreground = LocalWeatherForeground.current
+    Column(
+        modifier = modifier
+            .background(Color.White.copy(alpha = 0.08f), RectangleShape)
+            .padding(horizontal = 12.dp, vertical = 10.dp)
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Symbol(icon, color = foreground.copy(alpha = 0.8f), size = 15.dp)
+            Spacer(modifier = Modifier.width(6.dp))
             Text(
-                text = current.weatherCondition.toLabel(context),
-                style = MaterialTheme.typography.titleLarge,
-                color = Color.White
-            )
-            Spacer(modifier = Modifier.height(6.dp))
-            Text(
-                text = "Feels like ${feels ?: "-"}°",
-                style = MaterialTheme.typography.bodyMedium,
-                color = Color.White.copy(alpha = 0.85f)
-            )
-            Text(
-                text = "High ${high ?: "-"}°   Low ${low ?: "-"}°",
-                style = MaterialTheme.typography.bodyMedium,
-                color = Color.White.copy(alpha = 0.85f)
+                text = label,
+                style = MaterialTheme.typography.labelMedium.copy(color = foreground.copy(alpha = 0.7f)),
+                maxLines = 1
             )
         }
+        Spacer(modifier = Modifier.height(4.dp))
+        Text(
+            text = value,
+            style = MaterialTheme.typography.titleMedium.copy(color = foreground),
+            maxLines = 1
+        )
     }
 }
 
@@ -225,52 +273,108 @@ private fun HourlyPage(weather: Weather, units: WeatherUnits, context: Context, 
         weather.location.timezone,
         alwaysReturn24Hrs = true,
         keepPastHour = false
-    )
+    ).take(24)
     if (hours.isEmpty()) {
         MetroEmpty("no hourly data", modifier = Modifier.padding(PageInset))
         return
     }
+
+    val foreground = LocalWeatherForeground.current
+    val accent = MaterialTheme.colorScheme.primary
+    val columnWidth = 60.dp
+    val temps = hours.map { TemperatureUnit.CELSIUS.convert(it.temperature, units.tempUnit)?.roundToInt() }
+    val valid = temps.filterNotNull()
+    val lo = valid.minOrNull() ?: 0
+    val hi = valid.maxOrNull() ?: 1
+    val span = (hi - lo).takeIf { it > 0 } ?: 1
+
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-            .padding(horizontal = PageInset)
+            .horizontalScroll(rememberScrollState())
     ) {
-        Spacer(modifier = Modifier.height(4.dp))
-        hours.take(24).forEachIndexed { index, item ->
-            val temp = TemperatureUnit.CELSIUS.convert(item.temperature, units.tempUnit)?.roundToInt()
-            val time = if (prefs.is24HrTimeFormat) {
-                to24HourTimeString(item.time, weather.location.timezone)
-            } else {
-                to12HourTimeString(item.time, weather.location.timezone)
-            }
-            val pop = item.precipitationProbability
-            MetroListRow(
-                title = if (index == 0) "Now" else time,
-                subtitle = buildString {
-                    append(item.weatherCondition.toLabel(context))
-                    if (pop != null && pop > 0) append(" · $pop%")
-                },
-                leadingIcon = item.weatherCondition.toIcon(targetTimeMilli = item.time),
-                trailing = {
+        val totalWidth = columnWidth * hours.size
+
+        Row(modifier = Modifier.width(totalWidth).padding(top = 12.dp)) {
+            hours.forEachIndexed { index, item ->
+                Box(modifier = Modifier.width(columnWidth), contentAlignment = Alignment.Center) {
                     Text(
-                        text = "${temp ?: "-"}°",
-                        style = MaterialTheme.typography.titleLarge.copy(color = MaterialTheme.colorScheme.onSurface)
+                        text = if (index == 0) "Now" else hourLabel(item.time, weather.location.timezone, prefs.is24HrTimeFormat),
+                        style = MaterialTheme.typography.labelMedium.copy(color = foreground.copy(alpha = 0.65f)),
+                        maxLines = 1
                     )
                 }
-            )
+            }
         }
+
+        Row(modifier = Modifier.width(totalWidth).padding(top = 8.dp)) {
+            hours.forEach { item ->
+                Box(modifier = Modifier.width(columnWidth).height(34.dp), contentAlignment = Alignment.Center) {
+                    WeatherIconBox(item.weatherCondition.toIcon(targetTimeMilli = item.time), size = 26.dp)
+                }
+            }
+        }
+
+        Box(modifier = Modifier.width(totalWidth).height(80.dp)) {
+            HourlyCurve(temps = temps, min = lo, span = span, color = accent, modifier = Modifier.fillMaxSize())
+        }
+
+        Row(modifier = Modifier.width(totalWidth)) {
+            temps.forEach { t ->
+                Box(modifier = Modifier.width(columnWidth), contentAlignment = Alignment.Center) {
+                    Text(
+                        text = "${t ?: "-"}°",
+                        style = MaterialTheme.typography.titleMedium.copy(color = foreground)
+                    )
+                }
+            }
+        }
+
         Spacer(modifier = Modifier.height(24.dp))
     }
 }
 
 @Composable
-private fun DailyPage(weather: Weather, units: WeatherUnits, context: Context, prefs: AppPrefsState) {
+private fun HourlyCurve(temps: List<Int?>, min: Int, span: Int, color: Color, modifier: Modifier = Modifier) {
+    androidx.compose.foundation.Canvas(modifier = modifier) {
+        if (temps.size < 2) return@Canvas
+        val stepX = size.width / temps.size
+        val padY = 12f
+        val usable = size.height - padY * 2
+        val points = temps.mapIndexed { index, value ->
+            val fraction = if (value == null) 0.5f else (value - min).toFloat() / span
+            androidx.compose.ui.geometry.Offset(
+                x = stepX * (index + 0.5f),
+                y = padY + (1f - fraction.coerceIn(0f, 1f)) * usable
+            )
+        }
+
+        val path = androidx.compose.ui.graphics.Path().apply {
+            moveTo(points.first().x, points.first().y)
+            points.drop(1).forEach { lineTo(it.x, it.y) }
+        }
+        drawPath(path, color = color, style = androidx.compose.ui.graphics.drawscope.Stroke(width = 3f))
+        points.forEach { point ->
+            drawCircle(color = color, radius = 4.5f, center = point)
+        }
+    }
+}
+
+@Composable
+private fun DailyPage(
+    weather: Weather,
+    units: WeatherUnits,
+    context: Context,
+    prefs: AppPrefsState,
+    onScroll: (Float) -> Unit
+) {
     val daily = weather.daily
     if (daily.isEmpty()) {
         MetroEmpty("no daily data", modifier = Modifier.padding(PageInset))
         return
     }
+    val foreground = LocalWeatherForeground.current
+    val scroll = rememberScrollState()
     val lo = daily.mapNotNull { it.temperatureMin }.minOrNull() ?: 0.0
     val hi = daily.mapNotNull { it.temperatureMax }.maxOrNull() ?: 1.0
     val span = (hi - lo).takeIf { it > 0.0 } ?: 1.0
@@ -278,9 +382,10 @@ private fun DailyPage(weather: Weather, units: WeatherUnits, context: Context, p
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .verticalScroll(rememberScrollState())
+            .verticalScroll(scroll)
             .padding(horizontal = PageInset)
     ) {
+        ReportScroll(scroll, onScroll)
         Spacer(modifier = Modifier.height(4.dp))
         daily.forEachIndexed { index, day ->
             val max = TemperatureUnit.CELSIUS.convert(day.temperatureMax, units.tempUnit)?.roundToInt()
@@ -295,7 +400,7 @@ private fun DailyPage(weather: Weather, units: WeatherUnits, context: Context, p
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
                             text = if (index == 0) "Today" else toWeekdayString(day.time, weather.location.timezone),
-                            style = MaterialTheme.typography.titleLarge.copy(color = MaterialTheme.colorScheme.onSurface)
+                            style = MaterialTheme.typography.titleLarge.copy(color = foreground)
                         )
                         Text(
                             text = buildString {
@@ -303,17 +408,18 @@ private fun DailyPage(weather: Weather, units: WeatherUnits, context: Context, p
                                 val pop = day.precipitationProbabilityMax
                                 if (pop != null && pop > 0) append(" · $pop%")
                             },
-                            style = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.onSurfaceVariant)
+                            style = MaterialTheme.typography.bodySmall.copy(color = foreground.copy(alpha = 0.7f))
                         )
                     }
                     Text(
                         text = "$max° / $min°",
-                        style = MaterialTheme.typography.titleMedium.copy(color = MaterialTheme.colorScheme.onSurface)
+                        style = MaterialTheme.typography.titleMedium.copy(color = foreground)
                     )
                 }
                 RangeBar(
                     startFraction = (((day.temperatureMin ?: lo) - lo) / span).toFloat().coerceIn(0f, 1f),
                     endFraction = (((day.temperatureMax ?: lo) - lo) / span).toFloat().coerceIn(0f, 1f),
+                    foreground = foreground,
                     modifier = Modifier.padding(top = 6.dp, start = 44.dp)
                 )
             }
@@ -323,14 +429,14 @@ private fun DailyPage(weather: Weather, units: WeatherUnits, context: Context, p
 }
 
 @Composable
-private fun RangeBar(startFraction: Float, endFraction: Float, modifier: Modifier = Modifier) {
+private fun RangeBar(startFraction: Float, endFraction: Float, foreground: Color, modifier: Modifier = Modifier) {
     val start = startFraction.coerceIn(0f, 1f)
     val end = endFraction.coerceIn(start, 1f)
     Row(
         modifier = modifier
             .fillMaxWidth()
             .height(3.dp)
-            .background(MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.25f), RectangleShape)
+            .background(foreground.copy(alpha = 0.25f), RectangleShape)
     ) {
         if (start > 0.001f) {
             Spacer(modifier = Modifier.weight(start).fillMaxHeight())
@@ -339,7 +445,7 @@ private fun RangeBar(startFraction: Float, endFraction: Float, modifier: Modifie
             modifier = Modifier
                 .weight((end - start).coerceAtLeast(0.05f))
                 .fillMaxHeight()
-                .background(MaterialTheme.colorScheme.onSurface, RectangleShape)
+                .background(foreground, RectangleShape)
         )
         val tail = (1f - end).coerceAtLeast(0f)
         if (tail > 0.001f) {
@@ -371,6 +477,9 @@ private fun PlacesPage(
     )
 }
 
+private fun hourLabel(millis: Long, timezone: String, is24: Boolean): String =
+    if (is24) to24HourTimeString(millis, timezone) else to12HourTimeString(millis, timezone)
+
 private fun formatTime(millis: Long?, timezone: String, is24: Boolean): String {
     if (millis == null) return "--"
     return if (is24) to24HourTimeString(millis, timezone) else to12HourTimeString(millis, timezone)
@@ -383,56 +492,4 @@ private fun uvLabel(v: Double?): String = when {
     v < 8 -> "high"
     v < 11 -> "very high"
     else -> "extreme"
-}
-
-private fun conditionColor(condition: WeatherCondition): Color = when (condition) {
-    WeatherCondition.CLEAR_SKY,
-    WeatherCondition.MOSTLY_CLEAR,
-    WeatherCondition.VERY_HOT -> MetroColors.Blue
-
-    WeatherCondition.PARTLY_CLOUDY,
-    WeatherCondition.CLEAR_WITH_CLOUDY,
-    WeatherCondition.CLOUDY_WITH_CLEAR,
-    WeatherCondition.CLEAR_THEN_CLOUDY,
-    WeatherCondition.CLOUDY_THEN_CLEAR -> Color(0xFF3A8FC9)
-
-    WeatherCondition.OVERCAST -> Color(0xFF5F7383)
-
-    WeatherCondition.FOG_HAZE -> Color(0xFF7D8A93)
-
-    WeatherCondition.LIGHT_RAIN,
-    WeatherCondition.RAIN,
-    WeatherCondition.HEAVY_RAIN,
-    WeatherCondition.CLEAR_WITH_RAIN,
-    WeatherCondition.CLOUDY_WITH_RAIN,
-    WeatherCondition.RAIN_WITH_CLEAR,
-    WeatherCondition.RAIN_WITH_CLOUDY,
-    WeatherCondition.RAIN_THEN_CLEAR,
-    WeatherCondition.RAIN_THEN_CLOUDY,
-    WeatherCondition.CLEAR_THEN_RAIN,
-    WeatherCondition.CLOUDY_THEN_RAIN,
-    WeatherCondition.MIXED_PRECIPITATION -> Color(0xFF3C5A78)
-
-    WeatherCondition.LIGHT_SNOW,
-    WeatherCondition.SNOW,
-    WeatherCondition.HEAVY_SNOW,
-    WeatherCondition.SLEET,
-    WeatherCondition.CLEAR_WITH_SNOW,
-    WeatherCondition.CLOUDY_WITH_SNOW,
-    WeatherCondition.SNOW_WITH_CLEAR,
-    WeatherCondition.SNOW_WITH_CLOUDY,
-    WeatherCondition.SNOW_THEN_CLEAR,
-    WeatherCondition.SNOW_THEN_CLOUDY,
-    WeatherCondition.CLEAR_THEN_SNOW,
-    WeatherCondition.CLOUDY_THEN_SNOW,
-    WeatherCondition.RAIN_WITH_SNOW,
-    WeatherCondition.SNOW_WITH_RAIN,
-    WeatherCondition.RAIN_THEN_SNOW,
-    WeatherCondition.SNOW_THEN_RAIN,
-    WeatherCondition.VERY_COLD -> Color(0xFF7F9DB8)
-
-    WeatherCondition.THUNDERSTORM,
-    WeatherCondition.HAIL -> Color(0xFF3B3F5C)
-
-    WeatherCondition.NO_CONDITION_FOUND -> MetroColors.Blue
 }

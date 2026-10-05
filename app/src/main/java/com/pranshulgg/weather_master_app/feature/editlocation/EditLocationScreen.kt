@@ -88,7 +88,7 @@ fun EditLocationScreen(
         enabledValues = setOf(SheetValue.Expanded, SheetValue.Hidden)
     )
 
-    val colorDesc = MaterialTheme.colorScheme.tertiary
+    val colorDesc = MaterialTheme.colorScheme.primary
 
 
     val locationText = buildString {

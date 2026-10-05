@@ -48,7 +48,7 @@ fun AlertCard(alert: Alert, prefs: AppPrefsState, zoneId: String, shape: Shape) 
     }
 
     Surface(
-        color = MaterialTheme.colorScheme.surfaceBright,
+        color = MaterialTheme.colorScheme.surface,
         shape = shape,
         shadowElevation = ShadowElevation.level2
     ) {
@@ -86,8 +86,8 @@ fun AlertCard(alert: Alert, prefs: AppPrefsState, zoneId: String, shape: Shape) 
                         )
                         Chip(
                             "Effective ${formatter(alert.effective)}",
-                            MaterialTheme.colorScheme.tertiaryContainer,
-                            MaterialTheme.colorScheme.onTertiaryContainer
+                            MaterialTheme.colorScheme.surfaceContainerHigh,
+                            MaterialTheme.colorScheme.onSurface
                         )
                         Chip(
                             "Expires ${formatter(alert.expires)}",

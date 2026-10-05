@@ -71,7 +71,7 @@ fun SunBlock(weather: Weather, dailyIndex: Int, prefs: AppPrefsState, onClickBlo
                     .matchParentSize()
                     .align(Alignment.BottomCenter),
                 alignment = Alignment.BottomCenter,
-                colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.tertiaryContainer)
+                colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.surfaceContainerHigh)
             )
 
 

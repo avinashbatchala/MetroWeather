@@ -23,7 +23,7 @@ import com.pranshulgg.weather_master_app.core.ui.theme.ShadowElevation
 @Composable
 fun ScaleCard(items: @Composable () -> Unit) {
     Surface(
-        color = MaterialTheme.colorScheme.surfaceBright,
+        color = MaterialTheme.colorScheme.surface,
         shape = MaterialTheme.shapes.extraLarge,
         shadowElevation = ShadowElevation.level2,
         modifier = Modifier.padding(horizontal = 16.dp)

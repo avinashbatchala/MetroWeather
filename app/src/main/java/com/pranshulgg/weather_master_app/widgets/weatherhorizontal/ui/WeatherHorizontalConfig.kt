@@ -131,8 +131,8 @@ fun WeatherHorizontalConfig(onDone: (WidgetConfig) -> Unit = {}) {
                         },
                         modifier = Modifier.semantics { role = Role.RadioButton },
                         colors = ToggleButtonDefaults.toggleButtonColors(
-                            checkedContainerColor = MaterialTheme.colorScheme.tertiary,
-                            checkedContentColor = MaterialTheme.colorScheme.onTertiary,
+                            checkedContainerColor = MaterialTheme.colorScheme.primary,
+                            checkedContentColor = MaterialTheme.colorScheme.onPrimary,
                             containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
                         )
                     ) {

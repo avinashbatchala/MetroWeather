@@ -127,7 +127,7 @@ fun SettingSection(
 ) {
 
     val itemBgColor =
-        if (isModalOption) MaterialTheme.colorScheme.surfaceContainerHigh else MaterialTheme.colorScheme.surfaceBright
+        if (isModalOption) MaterialTheme.colorScheme.surfaceContainerHigh else MaterialTheme.colorScheme.surface
 
     Column(
         modifier = Modifier

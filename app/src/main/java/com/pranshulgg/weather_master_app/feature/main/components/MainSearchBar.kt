@@ -1,6 +1,5 @@
 package com.pranshulgg.weather_master_app.feature.main.components
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -24,6 +23,7 @@ import com.pranshulgg.weather_master_app.core.model.domain.location.Location
 import com.pranshulgg.weather_master_app.core.ui.components.Symbol
 import com.pranshulgg.weather_master_app.core.ui.navigation.NavRoutes
 import com.pranshulgg.weather_master_app.core.utils.weather.location.getFullLocationName
+import com.pranshulgg.weather_master_app.feature.main.ui.LocalWeatherForeground
 
 /** Flat Windows top bar: square refresh / edit / settings actions and a location title. */
 @Composable
@@ -39,10 +39,11 @@ fun MainSearchBar(
     val startPadding = paddingValues.calculateStartPadding(layoutDirection)
     val endPadding = paddingValues.calculateEndPadding(layoutDirection)
 
+    val foreground = LocalWeatherForeground.current
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.background)
             .padding(
                 top = paddingValues.calculateTopPadding() + 4.dp,
                 start = startPadding + 16.dp,
@@ -52,7 +53,7 @@ fun MainSearchBar(
     ) {
         Text(
             text = getFullLocationName(activeLocation),
-            color = MaterialTheme.colorScheme.onSurface,
+            color = foreground,
             style = MaterialTheme.typography.titleMedium,
             modifier = Modifier.weight(1f),
             maxLines = 1,
@@ -72,6 +73,6 @@ private fun BarAction(icon: Int, description: String, onClick: () -> Unit) {
             .clickable { onClick() },
         contentAlignment = Alignment.Center
     ) {
-        Symbol(icon, desc = description, color = MaterialTheme.colorScheme.onSurface, size = 22.dp)
+        Symbol(icon, desc = description, color = LocalWeatherForeground.current, size = 22.dp)
     }
 }

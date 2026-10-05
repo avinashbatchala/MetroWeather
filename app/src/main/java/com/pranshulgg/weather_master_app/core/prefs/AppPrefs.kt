@@ -11,7 +11,7 @@ import com.pranshulgg.weather_master_app.core.prefs.helper.PreferencesHelper
 
 object AppPrefs {
     private val _appTheme = mutableStateOf("Dark")
-    private val _customThemeColor = mutableStateOf("#2196f3")
+    private val _customThemeColor = mutableStateOf("#0078d7")
     private val _isCustomTheme = mutableStateOf(false)
     private val _isDynamicTheme = mutableStateOf(false)
     private val _isAmoledTheme = mutableStateOf(false)
@@ -45,7 +45,7 @@ object AppPrefs {
 
         _appTheme.value =
             PreferencesHelper.getString("app_theme") ?: "Dark"
-        _customThemeColor.value = PreferencesHelper.getString("custom_theme_color") ?: "#2196f3"
+        _customThemeColor.value = PreferencesHelper.getString("custom_theme_color") ?: "#0078d7"
         _isCustomTheme.value = PreferencesHelper.getBool("isCustomTheme") ?: false
         _isDynamicTheme.value = PreferencesHelper.getBool("isDynamicTheme") ?: false
         _isAmoledTheme.value = PreferencesHelper.getBool("isAmoledTheme") ?: false

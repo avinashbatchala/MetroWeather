@@ -101,7 +101,7 @@ fun SunMoonScreen(navController: NavController, index: Int, locationId: String) 
                     .padding(paddingValues)
         ) {
             Surface(
-                color = MaterialTheme.colorScheme.surfaceBright,
+                color = MaterialTheme.colorScheme.surface,
                 shape = MaterialTheme.shapes.extraLarge,
                 shadowElevation = ShadowElevation.level2,
                 modifier = Modifier.padding(horizontal = 16.dp)
@@ -133,7 +133,7 @@ fun SunMoonScreen(navController: NavController, index: Int, locationId: String) 
             }
             Gap(14.dp)
             Surface(
-                color = MaterialTheme.colorScheme.surfaceBright,
+                color = MaterialTheme.colorScheme.surface,
                 shape = MaterialTheme.shapes.extraLarge,
                 shadowElevation = ShadowElevation.level2,
                 modifier = Modifier.padding(horizontal = 16.dp)
