@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -73,26 +74,28 @@ fun FroggyWidgetConfig(onDone: (WidgetConfig) -> Unit = {}) {
     val widgetTextThemeOptions =
         WidgetTextTheme.entries.map { DialogOption(it.toString(), stringResource(it.label)) }
 
-    Scaffold(
-        containerColor = MaterialTheme.colorScheme.surfaceContainer
-    ) { paddingValues ->
+    Box(
+        Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+            .statusBarsPadding()
+    ) {
         Column(
             Modifier
-                .padding(bottom = paddingValues.calculateBottomPadding())
+                .padding(bottom = 0.dp)
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
         ) {
 
-            Surface(
-                color = Color(0xFF787878),
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .background(Color(0xFF787878))
             ) {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.weight(1f)
                 ) {
-                    Gap(paddingValues.calculateTopPadding())
+                    Gap(0.dp)
 
                     FroggyWidgetPreview(
                         widgetTextTheme,
@@ -171,7 +174,8 @@ fun FroggyWidgetConfig(onDone: (WidgetConfig) -> Unit = {}) {
                 )
             )
             Spacer(Modifier.weight(1f))
-            Button(
+            com.metro.ui.components.MetroButton(
+                text = stringResource(R.string.action_create_widget),
                 onClick = {
                     onDone(
                         WidgetConfig(
@@ -183,17 +187,9 @@ fun FroggyWidgetConfig(onDone: (WidgetConfig) -> Unit = {}) {
                     )
                 },
                 modifier = Modifier
-                    .heightIn(btnSize)
                     .fillMaxWidth()
-                    .padding(16.dp),
-                contentPadding = ButtonDefaults.contentPaddingFor(btnSize),
-                shapes = ButtonDefaults.shapes()
-            ) {
-                Text(
-                    stringResource(R.string.action_create_widget),
-                    style = ButtonDefaults.textStyleFor(btnSize)
-                )
-            }
+                    .padding(16.dp)
+            )
         }
     }
 

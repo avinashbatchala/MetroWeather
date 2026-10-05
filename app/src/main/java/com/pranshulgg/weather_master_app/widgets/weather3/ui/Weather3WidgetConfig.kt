@@ -1,6 +1,7 @@
 package com.pranshulgg.weather_master_app.widgets.weather3.ui
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -10,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -78,25 +80,27 @@ fun Weather3WidgetConfig(onDone: (WidgetConfig) -> Unit = {}) {
     var selectedHourlyCount by remember { mutableFloatStateOf(6f) }
 
 
-    Scaffold(
-        containerColor = MaterialTheme.colorScheme.surfaceContainer
-    ) { paddingValues ->
+    Box(
+        Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+            .statusBarsPadding()
+    ) {
         Column(
             Modifier
-                .padding(bottom = paddingValues.calculateBottomPadding())
+                .padding(bottom = 0.dp)
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
         ) {
-            Surface(
-                color = Color(0xFF787878),
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .background(Color(0xFF787878))
             ) {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.weight(1f)
                 ) {
-                    Gap(paddingValues.calculateTopPadding())
+                    Gap(0.dp)
                     ClockDailyWidgetPreview(
                         widgetTextTheme,
                         widgetTheme,
@@ -250,7 +254,8 @@ fun Weather3WidgetConfig(onDone: (WidgetConfig) -> Unit = {}) {
             )
 
             Spacer(Modifier.weight(1f))
-            Button(
+            com.metro.ui.components.MetroButton(
+                text = stringResource(R.string.action_create_widget),
                 onClick = {
                     onDone(
                         WidgetConfig(
@@ -267,17 +272,9 @@ fun Weather3WidgetConfig(onDone: (WidgetConfig) -> Unit = {}) {
                     )
                 },
                 modifier = Modifier
-                    .heightIn(btnSize)
                     .fillMaxWidth()
-                    .padding(16.dp),
-                contentPadding = ButtonDefaults.contentPaddingFor(btnSize),
-                shapes = ButtonDefaults.shapes()
-            ) {
-                Text(
-                    stringResource(R.string.action_create_widget),
-                    style = ButtonDefaults.textStyleFor(btnSize)
-                )
-            }
+                    .padding(16.dp)
+            )
         }
     }
 
