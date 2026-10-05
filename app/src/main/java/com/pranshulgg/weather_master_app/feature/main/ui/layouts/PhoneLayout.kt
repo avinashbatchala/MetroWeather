@@ -1,6 +1,7 @@
 package com.pranshulgg.weather_master_app.feature.main.ui.layouts
 
 import android.content.Context
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
@@ -28,8 +29,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.StrokeJoin
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -97,6 +104,7 @@ fun PhoneLayout(
             titles = listOf("now", "hourly", "daily", "places"),
             activeColor = foreground,
             inactiveColor = foreground.copy(alpha = 0.55f),
+            translateHeader = false,
             onPageChanged = { currentPage = it },
             modifier = Modifier.weight(1f)
         ) { page ->
@@ -281,81 +289,114 @@ private fun HourlyPage(weather: Weather, units: WeatherUnits, context: Context, 
 
     val foreground = LocalWeatherForeground.current
     val accent = MaterialTheme.colorScheme.primary
-    val columnWidth = 60.dp
+    val columnWidth = 66.dp
     val temps = hours.map { TemperatureUnit.CELSIUS.convert(it.temperature, units.tempUnit)?.roundToInt() }
+    val pops = hours.map { it.precipitationProbability }
     val valid = temps.filterNotNull()
     val lo = valid.minOrNull() ?: 0
     val hi = valid.maxOrNull() ?: 1
     val span = (hi - lo).takeIf { it > 0 } ?: 1
+    val totalWidth = columnWidth * hours.size
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .horizontalScroll(rememberScrollState())
-    ) {
-        val totalWidth = columnWidth * hours.size
+    Box(modifier = Modifier.fillMaxSize()) {
+        Column(
+            modifier = Modifier
+                .align(Alignment.CenterStart)
+                .horizontalScroll(rememberScrollState())
+        ) {
+            Row(modifier = Modifier.width(totalWidth)) {
+                hours.forEachIndexed { index, item ->
+                    Box(modifier = Modifier.width(columnWidth), contentAlignment = Alignment.Center) {
+                        Text(
+                            text = if (index == 0) "Now" else hourLabel(item.time, weather.location.timezone, prefs.is24HrTimeFormat),
+                            style = MaterialTheme.typography.labelLarge.copy(color = foreground.copy(alpha = 0.7f)),
+                            maxLines = 1
+                        )
+                    }
+                }
+            }
 
-        Row(modifier = Modifier.width(totalWidth).padding(top = 12.dp)) {
-            hours.forEachIndexed { index, item ->
-                Box(modifier = Modifier.width(columnWidth), contentAlignment = Alignment.Center) {
-                    Text(
-                        text = if (index == 0) "Now" else hourLabel(item.time, weather.location.timezone, prefs.is24HrTimeFormat),
-                        style = MaterialTheme.typography.labelMedium.copy(color = foreground.copy(alpha = 0.65f)),
-                        maxLines = 1
-                    )
+            Row(modifier = Modifier.width(totalWidth).padding(top = 16.dp)) {
+                hours.forEach { item ->
+                    Box(modifier = Modifier.width(columnWidth).height(36.dp), contentAlignment = Alignment.Center) {
+                        WeatherIconBox(item.weatherCondition.toIcon(targetTimeMilli = item.time), size = 30.dp)
+                    }
+                }
+            }
+
+            Box(modifier = Modifier.width(totalWidth).height(150.dp).padding(top = 12.dp)) {
+                HourlyCurve(temps = temps, min = lo, span = span, color = accent, modifier = Modifier.fillMaxSize())
+            }
+
+            Row(modifier = Modifier.width(totalWidth).padding(top = 10.dp)) {
+                temps.forEach { t ->
+                    Box(modifier = Modifier.width(columnWidth), contentAlignment = Alignment.Center) {
+                        Text(
+                            text = "${t ?: "-"}°",
+                            style = MaterialTheme.typography.titleLarge.copy(color = foreground)
+                        )
+                    }
+                }
+            }
+
+            Row(modifier = Modifier.width(totalWidth).padding(top = 4.dp)) {
+                pops.forEach { pop ->
+                    Box(modifier = Modifier.width(columnWidth), contentAlignment = Alignment.Center) {
+                        Text(
+                            text = if (pop != null && pop > 0) "$pop%" else "",
+                            style = MaterialTheme.typography.labelMedium.copy(color = accent.copy(alpha = 0.9f)),
+                            maxLines = 1
+                        )
+                    }
                 }
             }
         }
-
-        Row(modifier = Modifier.width(totalWidth).padding(top = 8.dp)) {
-            hours.forEach { item ->
-                Box(modifier = Modifier.width(columnWidth).height(34.dp), contentAlignment = Alignment.Center) {
-                    WeatherIconBox(item.weatherCondition.toIcon(targetTimeMilli = item.time), size = 26.dp)
-                }
-            }
-        }
-
-        Box(modifier = Modifier.width(totalWidth).height(80.dp)) {
-            HourlyCurve(temps = temps, min = lo, span = span, color = accent, modifier = Modifier.fillMaxSize())
-        }
-
-        Row(modifier = Modifier.width(totalWidth)) {
-            temps.forEach { t ->
-                Box(modifier = Modifier.width(columnWidth), contentAlignment = Alignment.Center) {
-                    Text(
-                        text = "${t ?: "-"}°",
-                        style = MaterialTheme.typography.titleMedium.copy(color = foreground)
-                    )
-                }
-            }
-        }
-
-        Spacer(modifier = Modifier.height(24.dp))
     }
 }
 
 @Composable
 private fun HourlyCurve(temps: List<Int?>, min: Int, span: Int, color: Color, modifier: Modifier = Modifier) {
-    androidx.compose.foundation.Canvas(modifier = modifier) {
+    Canvas(modifier = modifier) {
         if (temps.size < 2) return@Canvas
         val stepX = size.width / temps.size
-        val padY = 12f
-        val usable = size.height - padY * 2
+        val padTop = 20f
+        val padBottom = 20f
+        val usable = (size.height - padTop - padBottom).coerceAtLeast(1f)
         val points = temps.mapIndexed { index, value ->
             val fraction = if (value == null) 0.5f else (value - min).toFloat() / span
-            androidx.compose.ui.geometry.Offset(
+            Offset(
                 x = stepX * (index + 0.5f),
-                y = padY + (1f - fraction.coerceIn(0f, 1f)) * usable
+                y = padTop + (1f - fraction.coerceIn(0f, 1f)) * usable
             )
         }
 
-        val path = androidx.compose.ui.graphics.Path().apply {
+        val area = Path().apply {
+            moveTo(points.first().x, size.height)
+            points.forEach { lineTo(it.x, it.y) }
+            lineTo(points.last().x, size.height)
+            close()
+        }
+        drawPath(
+            path = area,
+            brush = Brush.verticalGradient(
+                colors = listOf(color.copy(alpha = 0.35f), Color.Transparent),
+                startY = 0f,
+                endY = size.height
+            )
+        )
+
+        val line = Path().apply {
             moveTo(points.first().x, points.first().y)
             points.drop(1).forEach { lineTo(it.x, it.y) }
         }
-        drawPath(path, color = color, style = androidx.compose.ui.graphics.drawscope.Stroke(width = 3f))
+        drawPath(
+            path = line,
+            color = color,
+            style = Stroke(width = 4f, cap = StrokeCap.Round, join = StrokeJoin.Round)
+        )
         points.forEach { point ->
-            drawCircle(color = color, radius = 4.5f, center = point)
+            drawCircle(color = Color.White, radius = 5.5f, center = point)
+            drawCircle(color = color, radius = 3.5f, center = point)
         }
     }
 }
