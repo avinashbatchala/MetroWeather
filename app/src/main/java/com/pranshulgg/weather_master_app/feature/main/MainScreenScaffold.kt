@@ -35,10 +35,10 @@ import com.pranshulgg.weather_master_app.feature.main.ui.layouts.TabletLayout
 @Composable
 fun MainScreenScaffold(
     navController: NavController,
-    drawerState: DrawerState,
     weatherStore: WeatherStoreState,
     onRefresh: () -> Unit,
     onEditLocation: () -> Unit,
+    onLocationSelect: (Location) -> Unit,
     context: Context,
     onWeatherSourceInfoClick: () -> Unit,
     isTabletLike: Boolean = false,
@@ -79,7 +79,6 @@ fun MainScreenScaffold(
                         isFroggyLayout = isFroggyLayout,
                         paddingValues = PaddingValues(0.dp),
                         navController = navController,
-                        drawerState = drawerState,
                         activeLocation = activeLocation,
                         onEditLocation = onEditLocation,
                         layoutDirection = layoutDirection,
@@ -100,6 +99,7 @@ fun MainScreenScaffold(
                                 airQuality,
                                 weatherBlocks,
                                 onUpdateBlocks,
+                                onLocationSelect,
                                 modifier = Modifier.weight(1f)
                             )
                         } else {

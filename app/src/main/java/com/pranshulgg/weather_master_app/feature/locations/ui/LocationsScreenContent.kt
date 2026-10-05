@@ -112,7 +112,7 @@ fun LocationsScreenContent(
 }
 
 @Composable
-private fun UseDeviceLocationRow(onClick: () -> Unit, isLoading: Boolean = false) {
+internal fun UseDeviceLocationRow(onClick: () -> Unit, isLoading: Boolean = false) {
     Row(
         modifier = Modifier
             .fillMaxWidth()

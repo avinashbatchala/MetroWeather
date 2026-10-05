@@ -100,20 +100,7 @@ fun MainScreen(navController: NavController, weatherViewModel: WeatherViewModel)
     )
 
 
-    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
-
-
-    val closeDrawer = {
-        scope.launch { drawerState.close() }
-    }
-
-
-    BackHandler(
-        enabled = drawerState.isOpen,
-    ) {
-        closeDrawer()
-    }
 
     LaunchedEffect(weatherViewModel.isUnSupportedSource) {
         if (weatherViewModel.isUnSupportedSource) {
@@ -145,48 +132,34 @@ fun MainScreen(navController: NavController, weatherViewModel: WeatherViewModel)
     }
 
 
-    NavigationDrawer(
-        drawerContent = {
-            LocationsScreen(
-                onBack = {
-                    closeDrawer()
-                },
-                navController,
-                onLocationSelect = {
-                    if (activeLocation == it) return@LocationsScreen
-                    weatherViewModel.setActiveLoading()
-                    scope.launch {
-                        drawerState.close() // wait until drawer fully closes
-                        weatherViewModel.setActiveLocation(it, skipLoading = true)
-                    }
-                },
-            )
+    MainScreenScaffold(
+        navController = navController,
+        weatherStore = weatherStore,
+        onRefresh = {
+            weatherViewModel.setActiveLoading()
+            weatherViewModel.refreshWeather(activeLocation)
         },
-        drawerState = drawerState,
-        content = {
-            MainScreenScaffold(
-                navController = navController,
-                drawerState = drawerState,
-                weatherStore = weatherStore,
-                onRefresh = {
-                    weatherViewModel.setActiveLoading()
-                    weatherViewModel.refreshWeather(activeLocation)
-                },
-                onEditLocation = {
-                    navController.navigate(NavRoutes.EDIT_LOCATION)
-                },
-                context = context,
-                onWeatherSourceInfoClick = viewModel::showWeatherSourcesInfoForLocationSheet,
-                isTabletLike = isTabletLike,
-                prefs = prefs,
-                units = unitsStore,
-                isLoading = locationStore.isActiveLocationLoading,
-                activeLocation = locationStore.activeLocation,
-                weatherBlocks = weatherBlocks,
-                onUpdateBlocks = {
-                    viewModel.saveBlocks(it)
+        onEditLocation = {
+            navController.navigate(NavRoutes.EDIT_LOCATION)
+        },
+        onLocationSelect = { location ->
+            if (activeLocation?.id != location.id) {
+                weatherViewModel.setActiveLoading()
+                scope.launch {
+                    weatherViewModel.setActiveLocation(location, skipLoading = true)
                 }
-            )
+            }
+        },
+        context = context,
+        onWeatherSourceInfoClick = viewModel::showWeatherSourcesInfoForLocationSheet,
+        isTabletLike = isTabletLike,
+        prefs = prefs,
+        units = unitsStore,
+        isLoading = locationStore.isActiveLocationLoading,
+        activeLocation = locationStore.activeLocation,
+        weatherBlocks = weatherBlocks,
+        onUpdateBlocks = {
+            viewModel.saveBlocks(it)
         }
     )
 

@@ -5,18 +5,14 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.material3.DrawerState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
@@ -28,27 +24,18 @@ import com.pranshulgg.weather_master_app.core.model.domain.location.Location
 import com.pranshulgg.weather_master_app.core.ui.components.Symbol
 import com.pranshulgg.weather_master_app.core.ui.navigation.NavRoutes
 import com.pranshulgg.weather_master_app.core.utils.weather.location.getFullLocationName
-import kotlinx.coroutines.launch
 
-/** Flat Windows 10 top bar: square menu / edit / settings actions and a light location title. */
+/** Flat Windows top bar: square refresh / edit / settings actions and a location title. */
 @Composable
 fun MainSearchBar(
     isFroggyLayout: Boolean = false,
     paddingValues: PaddingValues,
     navController: NavController,
-    drawerState: DrawerState,
     activeLocation: Location?,
     onEditLocation: () -> Unit,
     layoutDirection: LayoutDirection,
     onRefresh: () -> Unit = {}
 ) {
-    val scope = rememberCoroutineScope()
-    val showDrawer = {
-        scope.launch {
-            drawerState.apply { if (isClosed) open() else close() }
-        }
-    }
-
     val startPadding = paddingValues.calculateStartPadding(layoutDirection)
     val endPadding = paddingValues.calculateEndPadding(layoutDirection)
 
@@ -58,12 +45,11 @@ fun MainSearchBar(
             .background(MaterialTheme.colorScheme.background)
             .padding(
                 top = paddingValues.calculateTopPadding() + 4.dp,
-                start = startPadding,
+                start = startPadding + 16.dp,
                 end = endPadding
             ),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        BarAction(R.drawable.menu_24px, "Menu") { showDrawer() }
         Text(
             text = getFullLocationName(activeLocation),
             color = MaterialTheme.colorScheme.onSurface,

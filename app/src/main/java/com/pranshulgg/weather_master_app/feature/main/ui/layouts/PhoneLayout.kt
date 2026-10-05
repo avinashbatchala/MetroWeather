@@ -75,6 +75,7 @@ fun PhoneLayout(
     airQuality: AirQuality?,
     weatherBlocks: WeatherBlocksStoreState,
     onUpdateBlocks: (List<WeatherBlock>) -> Unit,
+    onLocationSelect: (com.pranshulgg.weather_master_app.core.model.domain.location.Location) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier.fillMaxSize()) {
@@ -100,7 +101,7 @@ fun PhoneLayout(
                 0 -> NowPage(weather, units, context, alerts, prefs.is24HrTimeFormat)
                 1 -> HourlyPage(weather, units, context, prefs)
                 2 -> DailyPage(weather, units, context, prefs)
-                else -> PlacesPage(weather, units, navController)
+                else -> PlacesPage(weather, units, navController, onLocationSelect)
             }
         }
     }
@@ -348,52 +349,26 @@ private fun RangeBar(startFraction: Float, endFraction: Float, modifier: Modifie
 }
 
 @Composable
-private fun PlacesPage(weather: Weather, units: WeatherUnits, navController: NavController) {
+private fun PlacesPage(
+    weather: Weather,
+    units: WeatherUnits,
+    navController: NavController,
+    onLocationSelect: (com.pranshulgg.weather_master_app.core.model.domain.location.Location) -> Unit
+) {
     val context = androidx.compose.ui.platform.LocalContext.current
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-            .padding(horizontal = PageInset)
-    ) {
-        Spacer(modifier = Modifier.height(4.dp))
-        val temp = TemperatureUnit.CELSIUS.convert(weather.current.temperature, units.tempUnit)?.roundToInt()
-        MetroListRow(
-            title = (weather.location.customName ?: weather.location.name).lowercase(),
-            subtitle = getFullLocationName(weather.location),
-            leadingIcon = R.drawable.location_on_24px,
-            trailing = {
-                Text(
-                    text = "${temp ?: "-"}°",
-                    style = MaterialTheme.typography.titleLarge.copy(color = MaterialTheme.colorScheme.onSurface)
-                )
-            }
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        MetroButton(
-            text = "add a place",
-            onClick = { navController.navigate(NavRoutes.SEARCH) },
-            modifier = Modifier.fillMaxWidth()
-        )
-        Spacer(modifier = Modifier.height(10.dp))
-        MetroButton(
-            text = "pin to start",
-            onClick = {
-                com.pranshulgg.weather_master_app.synergy.WeatherTilePin.pin(
-                    context = context,
-                    placeLabel = weather.location.customName ?: weather.location.name,
-                    size = "wide"
-                )
-            },
-            modifier = Modifier.fillMaxWidth(),
-            outlined = false
-        )
-        Text(
-            text = "Pins the weather tile to the Win10 Start launcher.",
-            style = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.onSurfaceVariant),
-            modifier = Modifier.padding(top = 10.dp, bottom = 24.dp)
-        )
-    }
+    com.pranshulgg.weather_master_app.feature.locations.ui.PlacesPivotContent(
+        onLocationSelect = onLocationSelect,
+        onAddPlace = { navController.navigate(NavRoutes.SEARCH) },
+        onEdit = { navController.navigate(NavRoutes.EDIT_LOCATION) },
+        onPin = {
+            com.pranshulgg.weather_master_app.synergy.WeatherTilePin.pin(
+                context = context,
+                placeLabel = weather.location.customName ?: weather.location.name,
+                size = "wide"
+            )
+        },
+        modifier = Modifier.fillMaxSize()
+    )
 }
 
 private fun formatTime(millis: Long?, timezone: String, is24: Boolean): String {
