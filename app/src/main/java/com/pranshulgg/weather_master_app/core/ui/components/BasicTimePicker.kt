@@ -14,7 +14,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.pranshulgg.weather_master_app.core.ui.metro.MetroSlider
+import com.metro.ui.components.MetroSlider
 import java.time.Instant
 import java.time.ZoneId
 import java.util.Calendar

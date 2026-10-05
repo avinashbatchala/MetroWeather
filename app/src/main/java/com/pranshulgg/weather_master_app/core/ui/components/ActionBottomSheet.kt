@@ -20,7 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.unit.dp
-import com.pranshulgg.weather_master_app.core.ui.metro.MetroButton
+import com.metro.ui.components.MetroButton
 import kotlinx.coroutines.launch
 
 /**

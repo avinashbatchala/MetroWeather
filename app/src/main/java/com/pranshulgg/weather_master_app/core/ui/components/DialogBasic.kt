@@ -12,8 +12,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.pranshulgg.weather_master_app.core.ui.metro.MetroButton
-import com.pranshulgg.weather_master_app.core.ui.metro.MetroDialogBox
+import com.metro.ui.components.MetroButton
+import com.metro.ui.components.MetroDialogBox
 
 /** Square Windows dialog with optional confirm/dismiss actions. */
 @Composable

@@ -1,4 +1,5 @@
 package com.pranshulgg.weather_master_app.core.ui.components.tiles
+import com.metro.ui.components.FlatRow
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box

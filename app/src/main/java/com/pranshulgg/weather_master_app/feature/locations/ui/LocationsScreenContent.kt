@@ -32,7 +32,7 @@ import com.pranshulgg.weather_master_app.core.model.domain.weather.Weather
 import com.pranshulgg.weather_master_app.core.model.weather.WeatherCondition
 import com.pranshulgg.weather_master_app.core.model.weather.toIcon
 import com.pranshulgg.weather_master_app.core.ui.components.SettingsTileIcon
-import com.pranshulgg.weather_master_app.core.ui.metro.MetroLoadingDots
+import com.metro.ui.components.MetroLoadingDots
 import com.pranshulgg.weather_master_app.core.utils.formatters.getCurrentTimeFor
 import com.pranshulgg.weather_master_app.core.utils.formatters.getLastUpdatedTimeString
 import com.pranshulgg.weather_master_app.feature.shared.components.LocationItem

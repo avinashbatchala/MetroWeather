@@ -1,7 +1,7 @@
 package com.pranshulgg.weather_master_app.core.ui.components
 
 import androidx.compose.runtime.Composable
-import com.pranshulgg.weather_master_app.core.ui.metro.MetroDialog
+import com.metro.ui.components.MetroDialog
 
 @Composable
 fun TextAlertDialog(

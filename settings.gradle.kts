@@ -22,3 +22,7 @@ dependencyResolutionManagement {
 
 rootProject.name = "MetroWeather"
 include(":app")
+
+// Shared Windows Metro design system (MetroSuite/design). Kept as a composite build so
+// this forked app keeps its own Gradle build and stays easy to rebase against upstream.
+includeBuild("../../design")

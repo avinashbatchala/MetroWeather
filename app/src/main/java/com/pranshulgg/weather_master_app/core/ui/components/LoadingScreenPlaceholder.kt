@@ -10,7 +10,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.zIndex
-import com.pranshulgg.weather_master_app.core.ui.metro.MetroLoadingDots
+import com.metro.ui.components.MetroLoadingDots
 
 @Composable
 fun LoadingScreenPlaceholder(

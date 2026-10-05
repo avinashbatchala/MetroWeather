@@ -1,9 +1,10 @@
 package com.pranshulgg.weather_master_app.core.ui.components.tiles
+import com.metro.ui.components.FlatRow
 
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
-import com.pranshulgg.weather_master_app.core.ui.metro.MetroToggle
+import com.metro.ui.components.MetroToggle
 
 @Composable
 fun SwitchTile(

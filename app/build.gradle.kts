@@ -139,6 +139,8 @@ room {
 }
 
 dependencies {
+    // Shared Windows Metro design system (composite build at MetroSuite/design).
+    implementation("com.metro:metro-ui")
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.process)
     implementation(libs.androidx.lifecycle.runtime.ktx)
