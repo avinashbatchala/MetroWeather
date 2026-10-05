@@ -511,6 +511,10 @@ private fun PlacesPage(
             com.pranshulgg.weather_master_app.synergy.WeatherTilePin.pin(
                 context = context,
                 placeLabel = weather.location.customName ?: weather.location.name,
+                latitude = weather.location.latitude,
+                longitude = weather.location.longitude,
+                timezone = weather.location.timezone,
+                locationId = weather.location.id,
                 size = "wide"
             )
         },
