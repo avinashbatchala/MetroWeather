@@ -28,14 +28,12 @@ fun WeatherBackground(
     showAnimations: Boolean = true,
     parallaxPx: Float = 0f
 ) {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .graphicsLayer { translationY = parallaxPx }
-    ) {
+    Box(modifier = Modifier.fillMaxSize()) {
         BackgroundGradient(weather, isScrolled = false)
         if (showAnimations && weather != null && isWeatherDomainSafe(weather)) {
-            WeatherAnimations(weather, isFroggyLayout = false)
+            Box(modifier = Modifier.fillMaxSize().graphicsLayer { translationY = parallaxPx }) {
+                WeatherAnimations(weather, isFroggyLayout = false)
+            }
         }
     }
 }
