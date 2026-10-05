@@ -149,9 +149,8 @@ fun EditLocationScreen(
         navigationIcon = { NavigateUpBtn(navController) },
         floatingActionButtonPosition = FabPosition.Center,
         actions = {
-            IconButton(
-                onClick = { navController.navigate(NavRoutes.API_KEYS_CONFIG) },
-                shapes = IconButtonDefaults.shapes()
+            com.metro.ui.components.MetroIconButton(
+                onClick = { navController.navigate(NavRoutes.API_KEYS_CONFIG) }
             ) {
                 Symbol(R.drawable.key_24px)
             }
@@ -173,7 +172,7 @@ fun EditLocationScreen(
                             viewModel.showEditLocationNameSheet()
                         },
                         trailing = {
-                            IconButton(onClick = { currentLocationName = locationText }) {
+                            com.metro.ui.components.MetroIconButton(onClick = { currentLocationName = locationText }) {
                                 Symbol(R.drawable.refresh_24px)
                             }
                         },
@@ -200,9 +199,8 @@ fun EditLocationScreen(
                                 locations.activeLocation.source == Source.OPEN_METEO
 
                             if (showButton) {
-                                IconButton(
-                                    onClick = viewModel::showOpenMeteoModelsSheet,
-                                    shapes = IconButtonDefaults.shapes()
+                                com.metro.ui.components.MetroIconButton(
+                                    onClick = viewModel::showOpenMeteoModelsSheet
                                 ) {
                                     Symbol(R.drawable.settings_24px)
                                 }
